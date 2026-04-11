@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="BillFlow" 
+           Manufacturer="BillFlow Inc." 
+           Version="2.0.0.0" 
+           UpgradeCode="12345678-1234-1234-1234-123456789012"
+           Scope="perMachine">
+    
+    <MajorUpgrade DowngradeErrorMessage="A newer version of BillFlow is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    
+    <Feature Id="ProductFeature" Title="BillFlow" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+    
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="BillFlow">
+        <Component Id="BillFlow.exe" Guid="*">
+          <File Source="..\BillFlow\bin\Release\net8.0-windows\BillFlow.exe" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="ApplicationShortcut" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+                  Name="BillFlow" 
+                  Description="BillFlow - Printing Business Management"
+                  Target="[INSTALLFOLDER]BillFlow.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="BillFlowIcon.ico" />
+        <RemoveFolder Id="CleanUpShortCut" Directory="ProgramMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\BillFlow" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+    
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Guid="*">
+        <File Source="..\BillFlow\bin\Release\net8.0-windows\BillFlow.dll" />
+        <File Source="..\BillFlow\bin\Release\net8.0-windows\BillFlow.runtimeconfig.json" />
+        <File Source="..\BillFlow\bin\Release\net8.0-windows\BillFlow.deps.json" />
+      </Component>
+    </ComponentGroup>
+    
+    <Icon Id="BillFlowIcon.ico" SourceFile="BillFlow.ico" />
+    <Property Id="ARPPRODUCTICON" Value="BillFlowIcon.ico" />
+    
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="2" />
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2" />
+    </UI>
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+  </Package>
+</Wix>

@@ -1,0 +1,171 @@
+<UserControl x:Class="BillFlow.Views.KhataLedgerPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Total Pending Banner -->
+        <Border Grid.Row="0" 
+                Style="{StaticResource GlassCardStyle}" 
+                Margin="0,0,0,16"
+                Background="{StaticResource PrimaryBrush}"
+                BorderBrush="{StaticResource PrimaryDarkBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="TOTAL PENDING ACROSS ALL CUSTOMERS" 
+                               Style="{StaticResource LabelStyle}"
+                               Foreground="White"
+                               Opacity="0.8"/>
+                    <TextBlock Text="PKR 17,095" 
+                               Style="{StaticResource CurrencyStyle}"
+                               Foreground="White"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" 
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Background="White"
+                        BorderBrush="White"
+                        Foreground="{StaticResource PrimaryBrush}"
+                        Content="Record Payment"
+                        VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Customer Selector and Stats -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource GlassCardStyle}" Padding="12,8">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Account" 
+                                             Width="20" 
+                                             Height="20"
+                                             Foreground="{StaticResource PrimaryBrush}"
+                                             VerticalAlignment="Center"/>
+                    <ComboBox Width="250"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              Margin="8,0,0,0"
+                              SelectedIndex="0">
+                        <ComboBoxItem>All Customers</ComboBoxItem>
+                        <ComboBoxItem>Ramesh Kumar (CUST001)</ComboBoxItem>
+                        <ComboBoxItem>Suresh Patel (CUST002)</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Border Style="{StaticResource GlassCardStyle}" Padding="16,8" Margin="8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Credit: " Style="{StaticResource BodyStyle}"/>
+                        <TextBlock Text="PKR 25,000" Style="{StaticResource NumberStyle}" Foreground="{StaticResource DangerBrush}" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource GlassCardStyle}" Padding="16,8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Paid: " Style="{StaticResource BodyStyle}"/>
+                        <TextBlock Text="PKR 7,905" Style="{StaticResource NumberStyle}" Foreground="{StaticResource SuccessBrush}" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Credit Summary Table -->
+        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Credit Summary" Style="{StaticResource H3Style}" Margin="0,0,0,16"/>
+
+                <DataGrid Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          HeadersVisibility="Column"
+                          Background="Transparent"
+                          RowBackground="Transparent"
+                          AlternatingRowBackground="{StaticResource Gray50Brush}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="CUSTOMER" Binding="{Binding Name}" Width="200"/>
+                        <DataGridTextColumn Header="TOTAL CREDIT" Binding="{Binding TotalCredit, StringFormat='PKR {0:N0}'}" Width="140">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="CREDIT LIMIT" Binding="{Binding CreditLimit, StringFormat='PKR {0:N0}'}" Width="120">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="LAST PAYMENT" Binding="{Binding LastPaymentDate, StringFormat='{}{0:dd MMM yyyy}'}" Width="120">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="DAYS" Binding="{Binding DaysSincePayment}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Header="RISK" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="🔴" FontSize="16" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="ACTIONS" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource PrimaryButtonStyle}" 
+                                                Content="Pay" 
+                                                Padding="16,6"
+                                                FontSize="12"/>
+                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+                                                Padding="8"
+                                                Margin="4,0,0,0">
+                                            <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

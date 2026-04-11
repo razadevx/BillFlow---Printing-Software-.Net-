@@ -1,0 +1,151 @@
+<UserControl x:Class="BillFlow.Views.WorkOrdersPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filter and Add Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Border Style="{StaticResource GlassCardStyle}" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Filter" Width="18" Height="18" Margin="4,0" VerticalAlignment="Center"/>
+                        <ComboBox Width="140" 
+                                  BorderThickness="0" 
+                                  Background="Transparent"
+                                  SelectedIndex="0">
+                            <ComboBoxItem>All Status</ComboBoxItem>
+                            <ComboBoxItem>Received</ComboBoxItem>
+                            <ComboBoxItem>In Progress</ComboBoxItem>
+                            <ComboBoxItem>Ready</ComboBoxItem>
+                            <ComboBoxItem>Delivered</ComboBoxItem>
+                            <ComboBoxItem>Completed</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource GlassCardStyle}" Padding="8,4" Margin="8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Calendar" Width="18" Height="18" Margin="4,0" VerticalAlignment="Center"/>
+                        <DatePicker BorderThickness="0" Background="Transparent" Width="130"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <Button Grid.Column="2" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Content="+ New Work Order"/>
+        </Grid>
+
+        <!-- Stats Bar -->
+        <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total: " Style="{StaticResource BodyStyle}"/>
+                <TextBlock Text="128" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
+                <TextBlock Text="Pending: " Style="{StaticResource BodyStyle}"/>
+                <TextBlock Text="45" Style="{StaticResource NumberStyle}" Margin="4,0,24,0" Foreground="{StaticResource WarningBrush}"/>
+                <TextBlock Text="Completed Today: " Style="{StaticResource BodyStyle}"/>
+                <TextBlock Text="12" Style="{StaticResource NumberStyle}" Margin="4,0,0,0" Foreground="{StaticResource SuccessBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Work Orders Data Grid -->
+        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+            <DataGrid AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="None"
+                      BorderThickness="0"
+                      HeadersVisibility="Column"
+                      Background="Transparent"
+                      RowBackground="Transparent"
+                      AlternatingRowBackground="{StaticResource Gray50Brush}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ORDER #" Binding="{Binding OrderCode}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="CUSTOMER" Binding="{Binding Customer.Name}" Width="180"/>
+                    <DataGridTextColumn Header="SCHEDULED" Binding="{Binding ScheduledDate, StringFormat='{}{0:dd MMM}'}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="AREA" Binding="{Binding TotalArea, StringFormat='{}{0:F1} SqFt'}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="AMOUNT" Binding="{Binding GrandTotal, StringFormat='PKR {0:N0}'}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="WORK STATUS" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource PendingBadgeStyle}" Padding="8,4">
+                                    <TextBlock Text="In Progress" 
+                                               Style="{StaticResource BodySmallStyle}"
+                                               Foreground="{StaticResource WarningBrush}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="PAYMENT" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OverdueBadgeStyle}" Padding="8,4">
+                                    <TextBlock Text="Credit" 
+                                               Style="{StaticResource BodySmallStyle}"
+                                               Foreground="{StaticResource DangerBrush}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="ACTIONS" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="8">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
+                                    </Button>
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="8" Margin="4,0,0,0">
+                                        <materialDesign:PackIcon Kind="FilePdf" Width="16" Height="16"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,136 @@
+<UserControl x:Class="BillFlow.Views.CustomersPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search and Add Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource GlassCardStyle}" Padding="12,8">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Magnify" 
+                                             Width="20" 
+                                             Height="20"
+                                             Foreground="{StaticResource Gray400Brush}"
+                                             VerticalAlignment="Center"/>
+                    <TextBox BorderThickness="0"
+                             Background="Transparent"
+                             Width="300"
+                             Margin="8,0,0,0"
+                             VerticalAlignment="Center"
+                             FontSize="14"
+                             ToolTip="Search customers by name or phone..."
+                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </Border>
+
+            <Button Grid.Column="1" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Content="+ Add Customer"
+                    Margin="16,0,0,0"
+                    Command="{Binding AddCustomerCommand}"/>
+        </Grid>
+
+        <!-- Stats Bar -->
+        <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Customers: " Style="{StaticResource BodyStyle}"/>
+                <TextBlock Text="{Binding TotalCustomers}" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
+                <TextBlock Text="With Credit: " Style="{StaticResource BodyStyle}"/>
+                <TextBlock Text="{Binding CustomersWithCredit}" Style="{StaticResource NumberStyle}" Margin="4,0,0,0" Foreground="{StaticResource WarningBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Customers Data Grid -->
+        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+            <DataGrid AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="None"
+                      BorderThickness="0"
+                      HeadersVisibility="Column"
+                      Background="Transparent"
+                      RowBackground="Transparent"
+                      AlternatingRowBackground="{StaticResource Gray50Brush}"
+                      ItemsSource="{Binding Customers}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="CODE" Binding="{Binding CustomerCode}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn Header="PHONE" Binding="{Binding Phone}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="CREDIT LIMIT" Binding="{Binding CreditLimit, StringFormat='PKR {0:N0}'}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="BALANCE" Binding="{Binding TotalCredit, StringFormat='PKR {0:N0}'}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="RISK" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="🟢" FontSize="16" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="ACTIONS" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            Padding="8"
+                                            Command="{Binding DataContext.EditCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
+                                    </Button>
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            Padding="8"
+                                            Margin="4,0,0,0"
+                                            Command="{Binding DataContext.ViewCustomerDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

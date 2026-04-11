@@ -1,0 +1,92 @@
+<Window x:Class="BillFlow.Views.Dialogs.RecordPaymentDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Record Payment"
+        Height="450" Width="450"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource Gray50Brush}">
+
+    <Border Style="{StaticResource GlassElevatedStyle}" Margin="24">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0" Text="Record Payment" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
+
+            <!-- Form -->
+            <StackPanel Grid.Row="1">
+                <!-- Customer Info -->
+                <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="CUSTOMER" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding CustomerName}" Style="{StaticResource H3Style}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="Current Balance: " Style="{StaticResource BodyStyle}"/>
+                            <TextBlock Text="{Binding CurrentBalance, StringFormat='PKR {0:N0}'}" 
+                                       Style="{StaticResource NumberStyle}" 
+                                       Foreground="{StaticResource PrimaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Payment Amount -->
+                <StackPanel Margin="0,0,0,16">
+                    <TextBlock Text="PAYMENT AMOUNT (PKR)" Style="{StaticResource LabelStyle}" Margin="0,0,0,8"/>
+                    <TextBox Style="{StaticResource GlassInputStyle}" 
+                             Text="{Binding PaymentAmount, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.FontFamily>
+                            <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
+                        </TextBox.FontFamily>
+                    </TextBox>
+                </StackPanel>
+
+                <!-- Payment Method -->
+                <StackPanel Margin="0,0,0,16">
+                    <TextBlock Text="PAYMENT METHOD" Style="{StaticResource LabelStyle}" Margin="0,0,0,8"/>
+                    <ComboBox ItemsSource="{Binding PaymentMethods}"
+                              SelectedItem="{Binding SelectedPaymentMethod}"
+                              Style="{StaticResource GlassInputStyle}"/>
+                </StackPanel>
+
+                <!-- Notes -->
+                <StackPanel Margin="0,0,0,16">
+                    <TextBlock Text="NOTES (Optional)" Style="{StaticResource LabelStyle}" Margin="0,0,0,8"/>
+                    <TextBox Style="{StaticResource GlassInputStyle}"
+                             Text="{Binding Notes}"
+                             Height="60"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalContentAlignment="Top"/>
+                </StackPanel>
+
+                <!-- Error Message -->
+                <TextBlock Text="{Binding ErrorMessage}" 
+                           Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                           Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+                <Button Style="{StaticResource SecondaryButtonStyle}" 
+                        Content="Cancel" 
+                        Margin="0,0,8,0"
+                        Click="CancelButton_Click"/>
+                <Button Style="{StaticResource PrimaryButtonStyle}" 
+                        Content="Record Payment"
+                        Command="{Binding RecordPaymentCommand}"
+                        IsEnabled="{Binding CanRecord}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

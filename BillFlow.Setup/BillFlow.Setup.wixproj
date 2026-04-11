@@ -1,0 +1,13 @@
+<Project Sdk="WixToolset.Sdk/4.0.0">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <Platforms>x64</Platforms>
+    <Configurations>Release</Configurations>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\BillFlow\bin\Release\net8.0-windows\**\*" LinkBase="ApplicationFiles">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
