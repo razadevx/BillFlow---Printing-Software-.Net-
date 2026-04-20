@@ -17,6 +17,12 @@
             <converters:ActiveNavForegroundConverter x:Key="ActiveNavForegroundConverter"/>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
             <converters:RouteMatchConverter x:Key="RouteMatchConverter"/>
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:RiskToBrushConverter x:Key="RiskToBrushConverter"/>
+            <converters:RiskToForegroundConverter x:Key="RiskToForegroundConverter"/>
+            <converters:RiskToDisplayConverter x:Key="RiskToDisplayConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -145,9 +145,10 @@ public class KhataService : IKhataService
     public async Task<decimal> GetTodayPaymentsTotalAsync()
     {
         var today = DateTime.Today;
-        return await _context.KhataEntries
+        var entries = await _context.KhataEntries
             .Where(e => e.Type == TransactionType.Debit && e.TransactionDate.Date == today)
-            .SumAsync(e => e.Amount);
+            .ToListAsync();
+        return entries.Sum(e => e.Amount);
     }
 
     public async Task<int> GetDaysSinceLastPaymentAsync(int customerId)

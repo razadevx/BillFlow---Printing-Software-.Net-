@@ -1,0 +1,20 @@
+﻿BillFlow
+
+
+winexe
+C#
+.cs
+E:\Runtime Project\billflow (Printing software )\BillFlowApp\BillFlow\obj\Release\net8.0-windows\win-x64\
+BillFlow
+none
+false
+TRACE;RELEASE;NET;NET8_0;NETCOREAPP
+E:\Runtime Project\billflow (Printing software )\BillFlowApp\BillFlow\App.xaml
+16-190271010
+
+461879732955
+2561703460306
+MainWindow.xaml;Styles\Colors.xaml;Styles\Glassmorphism.xaml;Styles\Typography.xaml;Views\CustomerDetailPage.xaml;Views\CustomersPage.xaml;Views\DailySchedulePage.xaml;Views\DashboardPage.xaml;Views\Dialogs\AddCustomerDialog.xaml;Views\Dialogs\RecordPaymentDialog.xaml;Views\Dialogs\RescheduleDateDialog.xaml;Views\InvoicePage.xaml;Views\KhataLedgerPage.xaml;Views\SettingsPage.xaml;Views\WorkOrderCreatePage.xaml;Views\WorkOrdersPage.xaml;
+
+True
+

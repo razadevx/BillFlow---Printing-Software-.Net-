@@ -63,11 +63,15 @@ public partial class InvoiceViewModel : ViewModelBase
     {
         IsLoading = true;
         ClearMessages();
-        
+
         try
         {
             var customers = await _customerService.GetAllAsync();
-            Customers = new ObservableCollection<Customer>(customers);
+            Customers.Clear();
+            foreach (var customer in customers)
+            {
+                Customers.Add(customer);
+            }
         }
         catch (Exception ex)
         {
@@ -87,7 +91,11 @@ public partial class InvoiceViewModel : ViewModelBase
             var orders = await _workOrderService.GetByCustomerAsync(customerId);
             // Filter pending orders (not fully paid)
             var pending = orders.Where(o => o.PendingAmount > 0).ToList();
-            PendingWorkOrders = new ObservableCollection<WorkOrder>(pending);
+            PendingWorkOrders.Clear();
+            foreach (var order in pending)
+            {
+                PendingWorkOrders.Add(order);
+            }
         }
         catch (Exception ex)
         {

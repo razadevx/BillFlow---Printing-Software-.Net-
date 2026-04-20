@@ -14,8 +14,26 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Filter and Add Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <!-- Notifications and Filter Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <!-- Notifications -->
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Filter and Add Header -->
+            <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -29,14 +47,9 @@
                         <ComboBox Width="140" 
                                   BorderThickness="0" 
                                   Background="Transparent"
-                                  SelectedIndex="0">
-                            <ComboBoxItem>All Status</ComboBoxItem>
-                            <ComboBoxItem>Received</ComboBoxItem>
-                            <ComboBoxItem>In Progress</ComboBoxItem>
-                            <ComboBoxItem>Ready</ComboBoxItem>
-                            <ComboBoxItem>Delivered</ComboBoxItem>
-                            <ComboBoxItem>Completed</ComboBoxItem>
-                        </ComboBox>
+                                  ItemsSource="{Binding WorkStatusFilters}"
+                                  DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedStatusOption, Mode=TwoWay}"/>
                     </StackPanel>
                 </Border>
 
@@ -50,18 +63,20 @@
 
             <Button Grid.Column="2" 
                     Style="{StaticResource PrimaryButtonStyle}"
-                    Content="+ New Work Order"/>
-        </Grid>
+                    Content="+ New Work Order"
+                    Command="{Binding CreateWorkOrderCommand}"/>
+            </Grid>
+        </StackPanel>
 
         <!-- Stats Bar -->
         <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Total: " Style="{StaticResource BodyStyle}"/>
-                <TextBlock Text="128" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
+                <TextBlock Text="{Binding TotalWorkOrders}" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
                 <TextBlock Text="Pending: " Style="{StaticResource BodyStyle}"/>
-                <TextBlock Text="45" Style="{StaticResource NumberStyle}" Margin="4,0,24,0" Foreground="{StaticResource WarningBrush}"/>
+                <TextBlock Text="{Binding PendingWorkOrders}" Style="{StaticResource NumberStyle}" Margin="4,0,24,0" Foreground="{StaticResource WarningBrush}"/>
                 <TextBlock Text="Completed Today: " Style="{StaticResource BodyStyle}"/>
-                <TextBlock Text="12" Style="{StaticResource NumberStyle}" Margin="4,0,0,0" Foreground="{StaticResource SuccessBrush}"/>
+                <TextBlock Text="{Binding CompletedToday}" Style="{StaticResource NumberStyle}" Margin="4,0,0,0" Foreground="{StaticResource SuccessBrush}"/>
             </StackPanel>
         </Border>
 
@@ -69,12 +84,16 @@
         <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
             <DataGrid AutoGenerateColumns="False"
                       IsReadOnly="True"
+                      CanUserSortColumns="True"
                       GridLinesVisibility="None"
                       BorderThickness="0"
                       HeadersVisibility="Column"
                       Background="Transparent"
                       RowBackground="Transparent"
-                      AlternatingRowBackground="{StaticResource Gray50Brush}">
+                      AlternatingRowBackground="{StaticResource Gray50Brush}"
+                      EnableRowVirtualization="True"
+                      EnableColumnVirtualization="True"
+                      ItemsSource="{Binding WorkOrders}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ORDER #" Binding="{Binding OrderCode}" Width="120">
                         <DataGridTextColumn.ElementStyle>
@@ -112,7 +131,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource PendingBadgeStyle}" Padding="8,4">
-                                    <TextBlock Text="In Progress" 
+                                    <TextBlock Text="{Binding WorkStatus}" 
                                                Style="{StaticResource BodySmallStyle}"
                                                Foreground="{StaticResource WarningBrush}"/>
                                 </Border>
@@ -123,7 +142,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource OverdueBadgeStyle}" Padding="8,4">
-                                    <TextBlock Text="Credit" 
+                                    <TextBlock Text="{Binding PaymentStatus}" 
                                                Style="{StaticResource BodySmallStyle}"
                                                Foreground="{StaticResource DangerBrush}"/>
                                 </Border>
@@ -134,11 +153,18 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="8">
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            Padding="8"
+                                            Command="{Binding DataContext.EditWorkOrderCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
                                     </Button>
-                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Padding="8" Margin="4,0,0,0">
-                                        <materialDesign:PackIcon Kind="FilePdf" Width="16" Height="16"/>
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            Padding="8"
+                                            Margin="4,0,0,0"
+                                            Command="{Binding DataContext.GenerateInvoiceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="FilePdfBox" Width="16" Height="16"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

@@ -61,6 +61,8 @@ public partial class SettingsViewModel : ViewModelBase
             settings.RatePerSqFt = RatePerSqFt;
             settings.DefaultCreditLimit = DefaultCreditLimit;
             settings.InvoicePrefix = InvoicePrefix;
+            settings.InvoiceTerms = InvoiceTerms;
+            settings.CurrencySymbol = CurrencySymbol;
             
             await _settingsService.UpdateSettingsAsync(settings);
             
@@ -93,6 +95,8 @@ public partial class SettingsViewModel : ViewModelBase
             RatePerSqFt = settings.RatePerSqFt;
             DefaultCreditLimit = settings.DefaultCreditLimit;
             InvoicePrefix = settings.InvoicePrefix;
+            InvoiceTerms = settings.InvoiceTerms;
+            CurrencySymbol = settings.CurrencySymbol;
         }
         catch (Exception ex)
         {

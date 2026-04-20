@@ -13,6 +13,8 @@ public interface INavigationService
     void SetFrame(Frame frame);
     void NavigateToCustomerDetail(int customerId);
     int? TryConsumeCustomerDetailId();
+    void NavigateToWorkOrderEdit(int workOrderId);
+    int? TryConsumeWorkOrderEditId();
     string? CurrentPage { get; }
     event EventHandler<string>? Navigated;
 }
@@ -22,6 +24,7 @@ public class NavigationService : INavigationService
     private readonly IServiceProvider _serviceProvider;
     private Frame? _frame;
     private int? _pendingCustomerDetailId;
+    private int? _pendingWorkOrderEditId;
 
     public string? CurrentPage { get; private set; }
     public event EventHandler<string>? Navigated;
@@ -81,6 +84,19 @@ public class NavigationService : INavigationService
     {
         var id = _pendingCustomerDetailId;
         _pendingCustomerDetailId = null;
+        return id;
+    }
+
+    public void NavigateToWorkOrderEdit(int workOrderId)
+    {
+        _pendingWorkOrderEditId = workOrderId;
+        NavigateTo("WorkOrderCreate");
+    }
+
+    public int? TryConsumeWorkOrderEditId()
+    {
+        var id = _pendingWorkOrderEditId;
+        _pendingWorkOrderEditId = null;
         return id;
     }
 }

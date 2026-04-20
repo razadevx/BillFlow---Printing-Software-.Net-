@@ -13,6 +13,22 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,0,24">
+            <!-- Notifications -->
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
             <!-- Metric Cards Row -->
             <Grid>
                 <Grid.ColumnDefinitions>

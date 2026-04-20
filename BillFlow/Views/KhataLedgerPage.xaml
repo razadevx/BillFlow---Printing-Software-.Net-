@@ -14,10 +14,26 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Notifications and Banner -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <!-- Notifications -->
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
         <!-- Total Pending Banner -->
-        <Border Grid.Row="0" 
-                Style="{StaticResource GlassCardStyle}" 
-                Margin="0,0,0,16"
+        <Border Style="{StaticResource GlassCardStyle}"
                 Background="{StaticResource PrimaryBrush}"
                 BorderBrush="{StaticResource PrimaryDarkBrush}">
             <Grid>
@@ -30,7 +46,7 @@
                                Style="{StaticResource LabelStyle}"
                                Foreground="White"
                                Opacity="0.8"/>
-                    <TextBlock Text="PKR 17,095" 
+                    <TextBlock Text="{Binding TotalPending, StringFormat='PKR {0:N0}'}" 
                                Style="{StaticResource CurrencyStyle}"
                                Foreground="White"
                                Margin="0,8,0,0"/>
@@ -41,9 +57,12 @@
                         BorderBrush="White"
                         Foreground="{StaticResource PrimaryBrush}"
                         Content="Record Payment"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center"
+                        Command="{Binding RecordPaymentCommand}"
+                        CommandParameter="{Binding SelectedSummary}"/>
             </Grid>
         </Border>
+        </StackPanel>
 
         <!-- Customer Selector and Stats -->
         <Grid Grid.Row="1" Margin="0,0,0,16">
@@ -63,11 +82,9 @@
                               BorderThickness="0"
                               Background="Transparent"
                               Margin="8,0,0,0"
-                              SelectedIndex="0">
-                        <ComboBoxItem>All Customers</ComboBoxItem>
-                        <ComboBoxItem>Ramesh Kumar (CUST001)</ComboBoxItem>
-                        <ComboBoxItem>Suresh Patel (CUST002)</ComboBoxItem>
-                    </ComboBox>
+                              ItemsSource="{Binding CustomerSummaries}"
+                              SelectedItem="{Binding SelectedSummary}"
+                              DisplayMemberPath="Customer.Name"/>
                 </StackPanel>
             </Border>
 
@@ -75,13 +92,13 @@
                 <Border Style="{StaticResource GlassCardStyle}" Padding="16,8" Margin="8,0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Credit: " Style="{StaticResource BodyStyle}"/>
-                        <TextBlock Text="PKR 25,000" Style="{StaticResource NumberStyle}" Foreground="{StaticResource DangerBrush}" Margin="4,0,0,0"/>
+                        <TextBlock Text="{Binding TotalPending, StringFormat='PKR {0:N0}'}" Style="{StaticResource NumberStyle}" Foreground="{StaticResource DangerBrush}" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource GlassCardStyle}" Padding="16,8">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Paid: " Style="{StaticResource BodyStyle}"/>
-                        <TextBlock Text="PKR 7,905" Style="{StaticResource NumberStyle}" Foreground="{StaticResource SuccessBrush}" Margin="4,0,0,0"/>
+                        <TextBlock Text="Paid Today: " Style="{StaticResource BodyStyle}"/>
+                        <TextBlock Text="{Binding TotalPaidToday, StringFormat='PKR {0:N0}'}" Style="{StaticResource NumberStyle}" Foreground="{StaticResource SuccessBrush}" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -105,9 +122,11 @@
                           HeadersVisibility="Column"
                           Background="Transparent"
                           RowBackground="Transparent"
-                          AlternatingRowBackground="{StaticResource Gray50Brush}">
+                          AlternatingRowBackground="{StaticResource Gray50Brush}"
+                          ItemsSource="{Binding CustomerSummaries}"
+                          SelectedItem="{Binding SelectedSummary}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="CUSTOMER" Binding="{Binding Name}" Width="200"/>
+                        <DataGridTextColumn Header="CUSTOMER" Binding="{Binding Customer.Name}" Width="200"/>
                         <DataGridTextColumn Header="TOTAL CREDIT" Binding="{Binding TotalCredit, StringFormat='PKR {0:N0}'}" Width="140">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -142,7 +161,7 @@
                         <DataGridTemplateColumn Header="RISK" Width="80">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="🔴" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding RiskEmoji}" FontSize="16" VerticalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -153,10 +172,14 @@
                                         <Button Style="{StaticResource PrimaryButtonStyle}" 
                                                 Content="Pay" 
                                                 Padding="16,6"
-                                                FontSize="12"/>
+                                                FontSize="12"
+                                                Command="{Binding DataContext.RecordPaymentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"/>
                                         <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
                                                 Padding="8"
-                                                Margin="4,0,0,0">
+                                                Margin="4,0,0,0"
+                                                Command="{Binding DataContext.ViewCustomerKhataCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}">
                                             <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
                                         </Button>
                                     </StackPanel>

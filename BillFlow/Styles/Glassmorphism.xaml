@@ -117,6 +117,7 @@
             <Trigger Property="Validation.HasError" Value="True">
                 <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
                 <Setter Property="Background" Value="#FEF2F2"/>
+                <Setter Property="ToolTip" Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={x:Static RelativeSource.Self}}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -242,6 +243,42 @@
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background" Value="#E0E7FF"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Outline Button (for secondary actions) -->
+    <Style x:Key="OutlineButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gray300Brush}"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="FontFamily" Value="{StaticResource InterFontFamily}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource Gray50Brush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Gray400Brush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{StaticResource Gray100Brush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

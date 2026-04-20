@@ -33,14 +33,23 @@ public partial class CustomersPage : UserControl
         var dialog = ((App)App.Current)._host?.Services.GetRequiredService<AddCustomerDialog>();
         if (dialog != null)
         {
+            if (DataContext is CustomersViewModel vm &&
+                dialog.DataContext is BillFlow.ViewModels.Dialogs.AddCustomerDialogViewModel dialogVm)
+            {
+                if (vm.EditingCustomer != null)
+                    dialogVm.InitializeForEdit(vm.EditingCustomer);
+                else
+                    dialogVm.InitializeForCreate();
+            }
+
             dialog.Owner = Window.GetWindow(this);
             var result = dialog.ShowDialog();
             if (result == true)
             {
                 // Refresh the list if customer was added
-                if (DataContext is CustomersViewModel vm)
+                if (DataContext is CustomersViewModel customersVm)
                 {
-                    _ = vm.LoadCustomersAsync();
+                    _ = customersVm.LoadCustomersAsync();
                 }
             }
         }

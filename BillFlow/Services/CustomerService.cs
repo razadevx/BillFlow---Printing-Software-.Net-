@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BillFlow.Database;
 using BillFlow.Models;
+using System.Diagnostics;
 
 namespace BillFlow.Services;
 
@@ -31,9 +32,24 @@ public class CustomerService : ICustomerService
 
     public async Task<List<Customer>> GetAllAsync()
     {
-        return await _context.Customers
-            .OrderBy(c => c.Name)
-            .ToListAsync();
+        Debug.WriteLine("[DEBUG] CustomerService.GetAllAsync - START");
+        try
+        {
+            var customers = await _context.Customers
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+            Debug.WriteLine($"[DEBUG] CustomerService.GetAllAsync - SUCCESS, found {customers.Count} customers");
+            foreach (var c in customers)
+            {
+                Debug.WriteLine($"[DEBUG]   - Customer: {c.Name} (ID: {c.Id})");
+            }
+            return customers;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[DEBUG ERROR] CustomerService.GetAllAsync - FAILED: {ex}");
+            throw;
+        }
     }
 
     public async Task<Customer?> GetByIdAsync(int id)

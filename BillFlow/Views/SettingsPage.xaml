@@ -9,7 +9,22 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel MaxWidth="600" HorizontalAlignment="Left">
-            
+            <!-- Notifications -->
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
             <!-- Business Information Section -->
             <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16">
                 <StackPanel>
@@ -111,7 +126,7 @@
                         <StackPanel Grid.Row="0" Margin="0,0,0,16">
                             <TextBlock Text="Invoice Terms / Footer Message" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
                             <TextBox Style="{StaticResource GlassInputStyle}" 
-                                     Text="Payment due within 15 days. Thank you for your business!" 
+                                     Text="{Binding InvoiceTerms, UpdateSourceTrigger=PropertyChanged}" 
                                      Height="60"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"
@@ -120,7 +135,7 @@
 
                         <StackPanel Grid.Row="1">
                             <TextBlock Text="Currency Symbol" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="PKR" MaxLength="3"/>
+                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding CurrencySymbol, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

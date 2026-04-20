@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Add Customer"
+        Title="{Binding DialogTitle}"
         Height="500" Width="500"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
@@ -20,7 +20,7 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <TextBlock Grid.Row="0" Text="Add New Customer" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
+            <TextBlock Grid.Row="0" Text="{Binding DialogTitle}" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
 
             <!-- Form Fields -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -84,9 +84,8 @@
                         Margin="0,0,8,0"
                         Click="CancelButton_Click"/>
                 <Button Style="{StaticResource PrimaryButtonStyle}" 
-                        Content="Save Customer"
-                        Command="{Binding SaveCommand}"
-                        IsEnabled="{Binding CanSave}"/>
+                        Content="{Binding SaveButtonText}"
+                        Command="{Binding SaveCommand}"/>
             </StackPanel>
         </Grid>
     </Border>

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using BillFlow.Services;
 using BillFlow.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace BillFlow.ViewModels;
 
@@ -29,30 +30,64 @@ public partial class WorkOrdersViewModel : ViewModelBase
     [ObservableProperty]
     private int _completedToday;
 
+    [ObservableProperty]
+    private WorkStatusFilterOption? _selectedStatusOption;
+
+    public List<WorkStatusFilterOption> WorkStatusFilters { get; } = new()
+    {
+        new("All Status", null),
+        new("Received", WorkStatus.Received),
+        new("In Progress", WorkStatus.InProgress),
+        new("Ready", WorkStatus.Ready),
+        new("Delivered", WorkStatus.Delivered),
+        new("Completed", WorkStatus.Completed)
+    };
+
     partial void OnSelectedStatusFilterChanged(WorkStatus? value)
     {
         _ = FilterWorkOrdersAsync();
     }
 
+    partial void OnSelectedStatusOptionChanged(WorkStatusFilterOption? value)
+    {
+        SelectedStatusFilter = value?.Status;
+    }
+
     public WorkOrdersViewModel(INavigationService navigationService, IWorkOrderService workOrderService)
     {
+        Debug.WriteLine("[DEBUG] WorkOrdersViewModel - Constructor START");
         _navigationService = navigationService;
         _workOrderService = workOrderService;
         PageTitle = "Work Orders";
-        
-        _ = LoadWorkOrdersAsync();
+        SelectedStatusOption = WorkStatusFilters.First();
+        Debug.WriteLine("[DEBUG] WorkOrdersViewModel - Constructor END, starting async load...");
+
+        // Use Task.Run to avoid blocking UI thread during construction
+        Task.Run(async () =>
+        {
+            try
+            {
+                await LoadWorkOrdersAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DEBUG ERROR] WorkOrdersViewModel - Constructor async load failed: {ex}");
+            }
+        });
     }
 
     [RelayCommand]
     private async Task LoadWorkOrdersAsync()
     {
+        Debug.WriteLine("[DEBUG] LoadWorkOrdersAsync - START");
         IsLoading = true;
         ClearMessages();
-        
+
         try
         {
-            List<WorkOrder> orders;
-            
+            Debug.WriteLine($"[DEBUG] LoadWorkOrdersAsync - Calling service... Filter: {SelectedStatusFilter}");
+            List<WorkOrder>? orders = null;
+
             if (SelectedStatusFilter.HasValue)
             {
                 orders = await _workOrderService.GetByStatusAsync(SelectedStatusFilter.Value);
@@ -61,21 +96,44 @@ public partial class WorkOrdersViewModel : ViewModelBase
             {
                 orders = await _workOrderService.GetAllAsync();
             }
-            
-            WorkOrders = new ObservableCollection<WorkOrder>(orders);
-            
+
+            Debug.WriteLine($"[DEBUG] LoadWorkOrdersAsync - Got {orders?.Count ?? 0} orders from service");
+
+            if (orders == null)
+            {
+                Debug.WriteLine("[DEBUG ERROR] LoadWorkOrdersAsync - Service returned NULL!");
+                ShowError("Failed to load work orders: Service returned null");
+                return;
+            }
+
+            // Switch to UI thread for ObservableCollection operations
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Debug.WriteLine("[DEBUG] LoadWorkOrdersAsync - Clearing and repopulating collection on UI thread");
+                // Clear and repopulate to avoid collection recreation (which causes WPF layout loop)
+                WorkOrders.Clear();
+                foreach (var order in orders)
+                {
+                    WorkOrders.Add(order);
+                }
+                Debug.WriteLine("[DEBUG] LoadWorkOrdersAsync - Collection updated");
+            });
+
             // Update stats
             TotalWorkOrders = orders.Count;
             PendingWorkOrders = orders.Count(o => o.WorkStatus != WorkStatus.Completed && o.WorkStatus != WorkStatus.Delivered);
             CompletedToday = orders.Count(o => o.WorkStatus == WorkStatus.Completed && o.OrderDate.Date == DateTime.Today);
+            Debug.WriteLine($"[DEBUG] LoadWorkOrdersAsync - Stats updated: Total={TotalWorkOrders}, Pending={PendingWorkOrders}, CompletedToday={CompletedToday}");
         }
         catch (Exception ex)
         {
+            Debug.WriteLine($"[DEBUG ERROR] LoadWorkOrdersAsync - Exception: {ex}");
             ShowError($"Failed to load work orders: {ex.Message}");
         }
         finally
         {
             IsLoading = false;
+            Debug.WriteLine("[DEBUG] LoadWorkOrdersAsync - END");
         }
     }
 
@@ -94,8 +152,9 @@ public partial class WorkOrdersViewModel : ViewModelBase
     [RelayCommand]
     private void EditWorkOrder(WorkOrder workOrder)
     {
+        if (workOrder == null) return;
         SelectedWorkOrder = workOrder;
-        // TODO: Show edit work order dialog
+        _navigationService.NavigateToWorkOrderEdit(workOrder.Id);
     }
 
     [RelayCommand]
@@ -151,3 +210,5 @@ public partial class WorkOrdersViewModel : ViewModelBase
         }
     }
 }
+
+public record WorkStatusFilterOption(string Label, WorkStatus? Status);

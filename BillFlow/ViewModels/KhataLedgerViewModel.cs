@@ -25,6 +25,9 @@ public partial class KhataLedgerViewModel : ViewModelBase
     private decimal _totalPending;
 
     [ObservableProperty]
+    private decimal _totalPaidToday;
+
+    [ObservableProperty]
     private bool _showRecordPaymentDialog;
 
     public KhataLedgerViewModel(
@@ -51,6 +54,7 @@ public partial class KhataLedgerViewModel : ViewModelBase
             var summaries = await _khataService.GetAllCustomersCreditSummaryAsync();
             CustomerSummaries = new ObservableCollection<CustomerCreditSummary>(summaries);
             TotalPending = summaries.Sum(s => s.TotalCredit);
+            TotalPaidToday = await _khataService.GetTodayPaymentsTotalAsync();
         }
         catch (Exception ex)
         {
@@ -65,6 +69,7 @@ public partial class KhataLedgerViewModel : ViewModelBase
     [RelayCommand]
     private void RecordPayment(CustomerCreditSummary? summary)
     {
+        summary ??= SelectedSummary;
         if (summary == null) return;
         SelectedSummary = summary;
         ShowRecordPaymentDialog = true;

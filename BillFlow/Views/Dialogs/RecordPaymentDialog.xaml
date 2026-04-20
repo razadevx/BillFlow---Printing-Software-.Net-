@@ -84,8 +84,7 @@
                         Click="CancelButton_Click"/>
                 <Button Style="{StaticResource PrimaryButtonStyle}" 
                         Content="Record Payment"
-                        Command="{Binding RecordPaymentCommand}"
-                        IsEnabled="{Binding CanRecord}"/>
+                        Command="{Binding RecordPaymentCommand}"/>
             </StackPanel>
         </Grid>
     </Border>

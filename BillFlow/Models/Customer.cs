@@ -31,6 +31,8 @@ public class Customer
     public DateTime? UpdatedAt { get; set; }
     public DateTime? LastPaymentDate { get; set; }
 
+    public CreditRiskLevel CreditRisk { get; set; } = CreditRiskLevel.Clear;
+
     // Navigation properties
     public ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
     public ICollection<KhataEntry> KhataEntries { get; set; } = new List<KhataEntry>();

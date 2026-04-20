@@ -8,13 +8,35 @@
              d:DesignHeight="600" d:DesignWidth="1000">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Notifications -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,16">
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
         <!-- Left Panel - Customer & Work Order Selection -->
-        <Border Grid.Column="0" Style="{StaticResource GlassCardStyle}" Margin="0,0,16,0">
+        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassCardStyle}" Margin="0,0,16,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -41,6 +63,21 @@
                             </ComboBox>
                         </StackPanel>
                     </Border>
+                    
+                    <Button Style="{StaticResource OutlineButtonStyle}" 
+                            Content="Print Account Statement" 
+                            Command="{Binding GenerateCustomerStatementCommand}"
+                            Margin="0,8,0,0"
+                            HorizontalAlignment="Stretch">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="AccountDetails" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
                 </StackPanel>
 
                 <!-- Work Orders List -->
@@ -79,7 +116,7 @@
         </Border>
 
         <!-- Right Panel - Invoice Preview -->
-        <Border Grid.Column="1" Style="{StaticResource GlassCardStyle}">
+        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassCardStyle}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -100,12 +137,12 @@
                         
                         <TextBlock FontSize="14" Margin="0,0,0,8">
                             <Run Text="Customer: "/>
-                            <Run Text="{Binding SelectedWorkOrder.Customer.Name}" FontWeight="SemiBold"/>
+                            <Run Text="{Binding SelectedCustomer.Name, TargetNullValue='-'}" FontWeight="SemiBold"/>
                         </TextBlock>
 
                         <TextBlock FontSize="14" Margin="0,0,0,8">
                             <Run Text="Order: "/>
-                            <Run Text="{Binding SelectedWorkOrder.OrderCode}" FontWeight="SemiBold"/>
+                            <Run Text="{Binding SelectedWorkOrder.OrderCode, TargetNullValue='-'}" FontWeight="SemiBold"/>
                         </TextBlock>
 
                         <Separator Margin="0,12"/>

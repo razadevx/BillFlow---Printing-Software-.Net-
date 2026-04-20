@@ -23,8 +23,20 @@ public class SettingsService : ISettingsService
 
     public async Task<AppSettings> GetSettingsAsync()
     {
-        var settings = await _context.Settings.FirstOrDefaultAsync();
-        
+        AppSettings settings;
+
+        try
+        {
+            settings = await _context.Settings
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
+        catch (InvalidOperationException)
+        {
+            // Database has NULL values, create new settings
+            settings = null;
+        }
+
         if (settings == null)
         {
             settings = new AppSettings();
@@ -51,6 +63,6 @@ public class SettingsService : ISettingsService
     public async Task<string> GetBusinessNameAsync()
     {
         var settings = await GetSettingsAsync();
-        return settings.BusinessName;
+        return settings.BusinessName ?? "My Printing Business";
     }
 }

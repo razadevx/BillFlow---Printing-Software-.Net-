@@ -33,16 +33,16 @@ public partial class App : Application
                     );
                     System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(dbPath)!);
                     options.UseSqlite($"Data Source={dbPath}");
-                });
+                }, ServiceLifetime.Transient);
 
                 // Services
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ICalculationService, CalculationService>();
-                services.AddScoped<ICustomerService, CustomerService>();
-                services.AddScoped<IWorkOrderService, WorkOrderService>();
-                services.AddScoped<IKhataService, KhataService>();
-                services.AddScoped<IInvoiceService, InvoiceService>();
-                services.AddScoped<ISettingsService, SettingsService>();
+                services.AddTransient<ICustomerService, CustomerService>();
+                services.AddTransient<IWorkOrderService, WorkOrderService>();
+                services.AddTransient<IKhataService, KhataService>();
+                services.AddTransient<IInvoiceService, InvoiceService>();
+                services.AddTransient<ISettingsService, SettingsService>();
 
                 // ViewModels
                 services.AddSingleton<MainViewModel>();
@@ -76,66 +76,97 @@ public partial class App : Application
             })
             .Build();
 
-        var dbPath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "BillFlow",
-            "billflow.db");
-
-        if (System.IO.File.Exists(dbPath))
-        {
-            var deleteLegacy = false;
-            await using (var conn = new SqliteConnection($"Data Source={dbPath}"))
-            {
-                await conn.OpenAsync();
-                await using var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT 1 FROM sqlite_master WHERE type='table' AND name='__EFMigrationsHistory' LIMIT 1";
-                var hasHistoryTable = await cmd.ExecuteScalarAsync() is not null;
-                if (!hasHistoryTable)
-                {
-                    deleteLegacy = true;
-                }
-                else
-                {
-                    cmd.CommandText = "SELECT COUNT(*) FROM __EFMigrationsHistory";
-                    var appliedCount = Convert.ToInt64(await cmd.ExecuteScalarAsync());
-                    cmd.CommandText = "SELECT 1 FROM sqlite_master WHERE type='table' AND name='Settings' LIMIT 1";
-                    var hasSettingsTable = await cmd.ExecuteScalarAsync() is not null;
-                    if (appliedCount == 0 && hasSettingsTable)
-                        deleteLegacy = true;
-                }
-            }
-
-            if (deleteLegacy)
-            {
-                SqliteConnection.ClearAllPools();
-                System.IO.File.Delete(dbPath);
-            }
-        }
-
         try
         {
             using (var scope = _host.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<BillFlowDbContext>();
                 await dbContext.Database.MigrateAsync();
+                await EnsureCustomerCreditRiskColumnAsync(dbContext);
+                await EnsureSettingsColumnsAsync(dbContext);
             }
         }
-        catch (Exception ex) when (ex.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase)
-            || ex.InnerException?.Message?.Contains("already exists", StringComparison.OrdinalIgnoreCase) == true)
+        catch (Exception ex)
         {
-            SqliteConnection.ClearAllPools();
-            if (System.IO.File.Exists(dbPath))
-                System.IO.File.Delete(dbPath);
-            using (var scope = _host.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<BillFlowDbContext>();
-                await dbContext.Database.MigrateAsync();
-            }
+            MessageBox.Show(
+                $"Database migration failed: {ex.Message}{Environment.NewLine}{Environment.NewLine}Existing data was left unchanged.",
+                "BillFlow Startup Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            Shutdown();
+            return;
         }
 
         // Show Main Window
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
+    }
+
+    private static async Task EnsureCustomerCreditRiskColumnAsync(BillFlowDbContext dbContext)
+    {
+        var connection = (SqliteConnection)dbContext.Database.GetDbConnection();
+        if (connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync();
+
+        await using var checkCommand = connection.CreateCommand();
+        checkCommand.CommandText = "PRAGMA table_info('Customers');";
+
+        var hasCreditRisk = false;
+        await using (var reader = await checkCommand.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                if (string.Equals(reader["name"]?.ToString(), "CreditRisk", StringComparison.OrdinalIgnoreCase))
+                {
+                    hasCreditRisk = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasCreditRisk)
+        {
+            await using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText = "ALTER TABLE Customers ADD COLUMN CreditRisk INTEGER NOT NULL DEFAULT 0;";
+            await alterCommand.ExecuteNonQueryAsync();
+        }
+    }
+
+    private static async Task EnsureSettingsColumnsAsync(BillFlowDbContext dbContext)
+    {
+        var connection = (SqliteConnection)dbContext.Database.GetDbConnection();
+        if (connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync();
+
+        await using var checkCommand = connection.CreateCommand();
+        checkCommand.CommandText = "PRAGMA table_info('Settings');";
+
+        var hasInvoiceTerms = false;
+        var hasCurrencySymbol = false;
+
+        await using (var reader = await checkCommand.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                var colName = reader["name"]?.ToString();
+                if (string.Equals(colName, "InvoiceTerms", StringComparison.OrdinalIgnoreCase)) hasInvoiceTerms = true;
+                if (string.Equals(colName, "CurrencySymbol", StringComparison.OrdinalIgnoreCase)) hasCurrencySymbol = true;
+            }
+        }
+
+        if (!hasInvoiceTerms)
+        {
+            await using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText = "ALTER TABLE Settings ADD COLUMN InvoiceTerms TEXT NOT NULL DEFAULT 'Payment due within 15 days. Thank you for your business!';";
+            await alterCommand.ExecuteNonQueryAsync();
+        }
+
+        if (!hasCurrencySymbol)
+        {
+            await using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText = "ALTER TABLE Settings ADD COLUMN CurrencySymbol TEXT NOT NULL DEFAULT 'PKR';";
+            await alterCommand.ExecuteNonQueryAsync();
+        }
     }
 
     protected override async void OnExit(ExitEventArgs e)

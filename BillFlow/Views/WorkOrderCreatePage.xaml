@@ -24,7 +24,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
-                <TextBlock Grid.Row="0" Text="Create Work Order" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
+                <TextBlock Grid.Row="0" Text="{Binding FormTitle}" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
 
                 <!-- Customer & Date -->
                 <Grid Grid.Row="1" Margin="0,0,0,16">
@@ -39,9 +39,16 @@
                             <ComboBox ItemsSource="{Binding Customers}"
                                       SelectedItem="{Binding SelectedCustomer}"
                                       DisplayMemberPath="Name"
-                                      BorderThickness="0"
-                                      Background="Transparent"/>
+                                      MinHeight="40"
+                                      Padding="8,4"
+                                      FontSize="14"
+                                      IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
                         </Border>
+                        <TextBlock Text="Loading customers..." 
+                                   Foreground="{StaticResource Gray500Brush}"
+                                   FontSize="12"
+                                   Margin="0,4,0,0"
+                                   Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Margin="8,0,0,0">
@@ -171,7 +178,7 @@
                             Margin="0,0,8,0"
                             Command="{Binding CancelCommand}"/>
                     <Button Style="{StaticResource PrimaryButtonStyle}" 
-                            Content="Create Work Order"
+                            Content="{Binding SubmitButtonText}"
                             Command="{Binding CreateWorkOrderCommand}"/>
                 </StackPanel>
             </Grid>

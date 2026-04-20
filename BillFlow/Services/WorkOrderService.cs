@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BillFlow.Database;
 using BillFlow.Models;
+using System.Diagnostics;
 
 namespace BillFlow.Services;
 
@@ -10,6 +11,7 @@ public interface IWorkOrderService
     Task<WorkOrder?> GetByIdAsync(int id);
     Task<WorkOrder> CreateAsync(WorkOrder order, List<LineItem> lineItems);
     Task<WorkOrder> UpdateAsync(WorkOrder order);
+    Task<WorkOrder> UpdateWithLineItemsAsync(int workOrderId, WorkOrder updatedValues, List<LineItem> lineItems);
     Task DeleteAsync(int id);
     Task<string> GenerateOrderCodeAsync();
     Task<List<WorkOrder>> GetByCustomerAsync(int customerId);
@@ -42,10 +44,21 @@ public class WorkOrderService : IWorkOrderService
 
     public async Task<List<WorkOrder>> GetAllAsync()
     {
-        return await _context.WorkOrders
-            .Include(w => w.Customer)
-            .OrderByDescending(w => w.OrderDate)
-            .ToListAsync();
+        Debug.WriteLine("[DEBUG] WorkOrderService.GetAllAsync - START");
+        try
+        {
+            var result = await _context.WorkOrders
+                .Include(w => w.Customer)
+                .OrderByDescending(w => w.OrderDate)
+                .ToListAsync();
+            Debug.WriteLine($"[DEBUG] WorkOrderService.GetAllAsync - SUCCESS, returned {result.Count} orders");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[DEBUG ERROR] WorkOrderService.GetAllAsync - FAILED: {ex}");
+            throw;
+        }
     }
 
     public async Task<WorkOrder?> GetByIdAsync(int id)
@@ -101,6 +114,38 @@ public class WorkOrderService : IWorkOrderService
         return order;
     }
 
+    public async Task<WorkOrder> UpdateWithLineItemsAsync(int workOrderId, WorkOrder updatedValues, List<LineItem> lineItems)
+    {
+        var existingOrder = await _context.WorkOrders
+            .Include(w => w.LineItems)
+            .FirstOrDefaultAsync(w => w.Id == workOrderId);
+
+        if (existingOrder == null)
+            throw new InvalidOperationException("Work order not found.");
+
+        existingOrder.CustomerId = updatedValues.CustomerId;
+        existingOrder.ScheduledDate = updatedValues.ScheduledDate;
+        existingOrder.PastBill = updatedValues.PastBill;
+        existingOrder.AmountPaid = updatedValues.AmountPaid;
+        existingOrder.PaymentStatus = updatedValues.PaymentStatus;
+        existingOrder.WorkStatus = updatedValues.WorkStatus;
+        existingOrder.Notes = updatedValues.Notes;
+
+        foreach (var item in lineItems)
+            _calculationService.RecalculateLineItem(item);
+
+        existingOrder.TotalArea = lineItems.Sum(i => i.Area);
+        existingOrder.TotalAmount = lineItems.Sum(i => i.Total);
+        existingOrder.GrandTotal = existingOrder.TotalAmount + existingOrder.PastBill;
+        existingOrder.PendingAmount = existingOrder.GrandTotal - existingOrder.AmountPaid;
+
+        _context.LineItems.RemoveRange(existingOrder.LineItems);
+        existingOrder.LineItems = lineItems;
+
+        await _context.SaveChangesAsync();
+        return existingOrder;
+    }
+
     public async Task DeleteAsync(int id)
     {
         var order = await _context.WorkOrders
@@ -136,6 +181,7 @@ public class WorkOrderService : IWorkOrderService
     public async Task<List<WorkOrder>> GetByCustomerAsync(int customerId)
     {
         return await _context.WorkOrders
+            .Include(w => w.Customer)
             .Include(w => w.LineItems)
             .Where(w => w.CustomerId == customerId)
             .OrderByDescending(w => w.OrderDate)
@@ -144,11 +190,22 @@ public class WorkOrderService : IWorkOrderService
 
     public async Task<List<WorkOrder>> GetByStatusAsync(WorkStatus status)
     {
-        return await _context.WorkOrders
-            .Include(w => w.Customer)
-            .Where(w => w.WorkStatus == status)
-            .OrderByDescending(w => w.OrderDate)
-            .ToListAsync();
+        Debug.WriteLine($"[DEBUG] WorkOrderService.GetByStatusAsync - START, status: {status}");
+        try
+        {
+            var result = await _context.WorkOrders
+                .Include(w => w.Customer)
+                .Where(w => w.WorkStatus == status)
+                .OrderByDescending(w => w.OrderDate)
+                .ToListAsync();
+            Debug.WriteLine($"[DEBUG] WorkOrderService.GetByStatusAsync - SUCCESS, returned {result.Count} orders");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[DEBUG ERROR] WorkOrderService.GetByStatusAsync - FAILED: {ex}");
+            throw;
+        }
     }
 
     public async Task<List<WorkOrder>> GetByScheduledDateAsync(DateTime date)

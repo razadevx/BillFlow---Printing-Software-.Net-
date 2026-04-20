@@ -1,7 +1,7 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
-    "net8.0-windows7.0": {
+    "net8.0-windows": {
       "CommunityToolkit.Mvvm/8.2.2": {
         "type": "package",
         "compile": {
@@ -4773,7 +4773,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net8.0-windows7.0": [
+    "net8.0-windows": [
       "CommunityToolkit.Mvvm >= 8.2.2",
       "Dapper >= 2.1.35",
       "LiveChartsCore.SkiaSharpView.WPF >= 2.0.0-rc2",
@@ -4792,23 +4792,26 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Work\\billflow (Printing software )\\BillFlowApp\\BillFlow\\BillFlow.csproj",
+      "projectUniqueName": "E:\\Runtime Project\\billflow (Printing software )\\BillFlowApp\\BillFlow\\BillFlow.csproj",
       "projectName": "BillFlow",
-      "projectPath": "E:\\Work\\billflow (Printing software )\\BillFlowApp\\BillFlow\\BillFlow.csproj",
+      "projectPath": "E:\\Runtime Project\\billflow (Printing software )\\BillFlowApp\\BillFlow\\BillFlow.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "E:\\Work\\billflow (Printing software )\\BillFlowApp\\BillFlow\\obj\\",
+      "outputPath": "E:\\Runtime Project\\billflow (Printing software )\\BillFlowApp\\BillFlow\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0-windows"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net8.0-windows7.0": {
+        "net8.0-windows": {
+          "framework": "net8.0-windows7.0",
           "targetAlias": "net8.0-windows",
           "projectReferences": {}
         }
@@ -4822,10 +4825,12 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.300"
     },
     "frameworks": {
-      "net8.0-windows7.0": {
+      "net8.0-windows": {
+        "framework": "net8.0-windows7.0",
         "targetAlias": "net8.0-windows",
         "dependencies": {
           "CommunityToolkit.Mvvm": {
@@ -4890,7 +4895,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300-preview.0.26177.108/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

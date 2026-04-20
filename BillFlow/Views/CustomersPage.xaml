@@ -14,8 +14,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Search and Add Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <!-- Notifications and Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
+                    Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -44,7 +60,8 @@
                     Content="+ Add Customer"
                     Margin="16,0,0,0"
                     Command="{Binding AddCustomerCommand}"/>
-        </Grid>
+            </Grid>
+        </StackPanel>
 
         <!-- Stats Bar -->
         <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
@@ -56,17 +73,44 @@
             </StackPanel>
         </Border>
 
+        <!-- Loading Spinner -->
+        <Border Grid.Row="2" 
+                Style="{StaticResource GlassCardStyle}"
+                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ProgressBar IsIndeterminate="True" Width="180" Height="6"/>
+                    <TextBlock Text="Loading customers..." Margin="0,16,0,0" Foreground="{StaticResource Gray500Brush}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Empty State -->
+        <Border Grid.Row="2" 
+                Style="{StaticResource GlassCardStyle}"
+                Visibility="{Binding HasNoCustomers, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="48">
+                <materialDesign:PackIcon Kind="AccountOff" Width="64" Height="64" Foreground="{StaticResource Gray300Brush}" HorizontalAlignment="Center"/>
+                <TextBlock Text="No customers found" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Gray600Brush}" HorizontalAlignment="Center" Margin="0,16,0,8"/>
+                <TextBlock Text="Add your first customer to get started" FontSize="14" Foreground="{StaticResource Gray400Brush}" HorizontalAlignment="Center"/>
+                <Button Content="Add Customer" Style="{StaticResource PrimaryButtonStyle}" Margin="0,24,0,0" HorizontalAlignment="Center" Command="{Binding AddCustomerCommand}"/>
+            </StackPanel>
+        </Border>
+
         <!-- Customers Data Grid -->
-        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+        <Border Grid.Row="2" 
+                Style="{StaticResource GlassCardStyle}"
+                Visibility="{Binding HasCustomers, Converter={StaticResource BoolToVisibilityConverter}}">
             <DataGrid AutoGenerateColumns="False"
                       IsReadOnly="True"
+                      CanUserSortColumns="True"
                       GridLinesVisibility="None"
                       BorderThickness="0"
                       HeadersVisibility="Column"
                       Background="Transparent"
                       RowBackground="Transparent"
                       AlternatingRowBackground="{StaticResource Gray50Brush}"
-                      ItemsSource="{Binding Customers}">
+                      ItemsSource="{Binding CustomersView}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="CODE" Binding="{Binding CustomerCode}" Width="80">
                         <DataGridTextColumn.ElementStyle>
@@ -101,14 +145,25 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="RISK" Width="80">
+                    <DataGridTemplateColumn Header="RISK" Width="100"
+                                            SortMemberPath="CreditRisk"
+                                            CanUserSort="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="🟢" FontSize="16" VerticalAlignment="Center"/>
+                                <Border Background="{Binding CreditRisk, Converter={StaticResource RiskToBrushConverter}}"
+                                        CornerRadius="12"
+                                        Padding="8,4"
+                                        HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding CreditRisk, Converter={StaticResource RiskToDisplayConverter}}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding CreditRisk, Converter={StaticResource RiskToForegroundConverter}}"/>
+                                </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="ACTIONS" Width="120">
+                    <DataGridTemplateColumn Header="ACTIONS" Width="120"
+                                            CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -124,6 +179,14 @@
                                             Command="{Binding DataContext.ViewCustomerDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}">
                                         <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
+                                    </Button>
+                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                            Padding="8"
+                                            Margin="4,0,0,0"
+                                            Foreground="{StaticResource DangerBrush}"
+                                            Command="{Binding DataContext.DeleteCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

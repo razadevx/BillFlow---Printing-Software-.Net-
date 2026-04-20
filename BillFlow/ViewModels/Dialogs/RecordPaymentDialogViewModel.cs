@@ -46,6 +46,8 @@ public partial class RecordPaymentDialogViewModel : ObservableObject
     partial void OnPaymentAmountChanged(decimal value)
     {
         ErrorMessage = null;
+        OnPropertyChanged(nameof(CanRecord));
+        RecordPaymentCommand.NotifyCanExecuteChanged();
         if (value > CurrentBalance)
         {
             ErrorMessage = "Payment amount cannot exceed current balance";
@@ -57,6 +59,8 @@ public partial class RecordPaymentDialogViewModel : ObservableObject
         CustomerId = customer.Id;
         CustomerName = customer.Name;
         CurrentBalance = customer.TotalCredit;
+        OnPropertyChanged(nameof(CanRecord));
+        RecordPaymentCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand(CanExecute = nameof(CanRecord))]
