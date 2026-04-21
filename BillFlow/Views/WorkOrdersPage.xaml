@@ -11,11 +11,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Header Section -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Work Orders" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Gray900Brush}" FontFamily="{StaticResource InterFontFamily}"/>
+            <TextBlock Text="Track and manage all printing jobs from creation to completion." FontSize="14" Foreground="{StaticResource Gray500Brush}" Margin="0,8,0,0" FontFamily="{StaticResource InterFontFamily}"/>
+        </StackPanel>
+
         <!-- Notifications and Filter Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
             <!-- Notifications -->
             <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
@@ -69,7 +76,7 @@
         </StackPanel>
 
         <!-- Stats Bar -->
-        <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
+        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Total: " Style="{StaticResource BodyStyle}"/>
                 <TextBlock Text="{Binding TotalWorkOrders}" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
@@ -81,7 +88,7 @@
         </Border>
 
         <!-- Work Orders Data Grid -->
-        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+        <Border Grid.Row="3" Style="{StaticResource GlassCardStyle}">
             <DataGrid AutoGenerateColumns="False"
                       IsReadOnly="True"
                       CanUserSortColumns="True"

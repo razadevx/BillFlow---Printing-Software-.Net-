@@ -4,17 +4,168 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:BillFlow.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000">
+             d:DesignHeight="700" d:DesignWidth="1100">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.Resources>
+            <!-- DataGrid Row Hover Effect -->
+            <Style x:Key="ModernDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="GridLinesVisibility" Value="None"/>
+                <Setter Property="RowBackground" Value="Transparent"/>
+                <Setter Property="AlternatingRowBackground" Value="{StaticResource Gray50Brush}"/>
+                <Setter Property="RowHeight" Value="56"/>
+                <Setter Property="HeadersVisibility" Value="Column"/>
+                <Setter Property="CanUserSortColumns" Value="True"/>
+                <Setter Property="CanUserResizeColumns" Value="True"/>
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="SelectionMode" Value="Single"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="EnableRowVirtualization" Value="True"/>
+                <Setter Property="EnableColumnVirtualization" Value="True"/>
+            </Style>
+            
+            <!-- DataGrid Row Style with Hover -->
+            <Style x:Key="ModernDataGridRowStyle" TargetType="DataGridRow">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Height" Value="60"/>
+                <Setter Property="MinHeight" Value="60"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#F9FAFB"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#EEF2FF"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- DataGrid Header Style -->
+            <Style x:Key="ModernDataGridHeaderStyle" TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{StaticResource Gray50Brush}"/>
+                <Setter Property="Foreground" Value="{StaticResource Gray700Brush}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Padding" Value="16,14"/>
+                <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Gray200Brush}"/>
+                <Setter Property="Height" Value="52"/>
+            </Style>
+            
+            <!-- Action Button Style -->
+            <Style x:Key="ActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Width" Value="36"/>
+                <Setter Property="Height" Value="36"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="10"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource Gray100Brush}"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{StaticResource Gray200Brush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- Stat Card Style -->
+            <Style x:Key="StatCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Gray200Brush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="16"/>
+                <Setter Property="Padding" Value="24"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.06" Color="Black"/>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect ShadowDepth="0" BlurRadius="16" Opacity="0.1" Color="Black"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="BorderBrush" Value="{StaticResource Gray300Brush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- Filter Chip Style -->
+            <Style x:Key="FilterChipStyle" TargetType="ToggleButton">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Gray300Brush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="14,8"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="24"
+                                    Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="4" Opacity="0.04" Color="Black"/>
+                                </Border.Effect>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource Gray50Brush}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                            <Condition Property="IsChecked" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryDarkBrush}"/>
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
 
-        <!-- Notifications and Header -->
+        <!-- Toast Notifications -->
         <StackPanel Grid.Row="0" Margin="0,0,0,16">
             <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
@@ -30,163 +181,563 @@
                     <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
+        </StackPanel>
 
-            <Grid>
+        <!-- Header Section -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,24">
+            <TextBlock Text="Customers" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Gray900Brush}" FontFamily="{StaticResource InterFontFamily}"/>
+            <TextBlock Text="Manage your customer directory, credit limits, and track outstanding balances." FontSize="14" Foreground="{StaticResource Gray500Brush}" Margin="0,8,0,0" FontFamily="{StaticResource InterFontFamily}"/>
+        </StackPanel>
+
+        <!-- Search and Actions Row -->
+        <Grid Grid.Row="2" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <Border Style="{StaticResource GlassCardStyle}" Padding="12,8">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Magnify" 
-                                             Width="20" 
-                                             Height="20"
-                                             Foreground="{StaticResource Gray400Brush}"
-                                             VerticalAlignment="Center"/>
-                    <TextBox BorderThickness="0"
-                             Background="Transparent"
-                             Width="300"
-                             Margin="8,0,0,0"
-                             VerticalAlignment="Center"
-                             FontSize="14"
-                             ToolTip="Search customers by name or phone..."
-                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-            </Border>
-
-            <Button Grid.Column="1" 
-                    Style="{StaticResource PrimaryButtonStyle}"
-                    Content="+ Add Customer"
-                    Margin="16,0,0,0"
-                    Command="{Binding AddCustomerCommand}"/>
-            </Grid>
-        </StackPanel>
-
-        <!-- Stats Bar -->
-        <Border Grid.Row="1" Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16" Padding="16">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Total Customers: " Style="{StaticResource BodyStyle}"/>
-                <TextBlock Text="{Binding TotalCustomers}" Style="{StaticResource NumberStyle}" Margin="4,0,24,0"/>
-                <TextBlock Text="With Credit: " Style="{StaticResource BodyStyle}"/>
-                <TextBlock Text="{Binding CustomersWithCredit}" Style="{StaticResource NumberStyle}" Margin="4,0,0,0" Foreground="{StaticResource WarningBrush}"/>
+            
+            <!-- Search and Filters -->
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <!-- Search Box -->
+                <Border Background="White" 
+                        BorderBrush="{StaticResource Gray200Brush}" 
+                        BorderThickness="1" 
+                        CornerRadius="12" 
+                        Padding="14,10"
+                        Width="360">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.06" Color="Black"/>
+                    </Border.Effect>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Magnify" 
+                                                 Width="22" 
+                                                 Height="22"
+                                                 Foreground="{StaticResource Gray400Brush}"
+                                                 VerticalAlignment="Center"/>
+                        <TextBox BorderThickness="0"
+                                 Background="Transparent"
+                                 Margin="10,0,0,0"
+                                 VerticalAlignment="Center"
+                                 FontSize="15"
+                                 Width="290"
+                                 Foreground="{StaticResource Gray800Brush}"
+                                 Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <VisualBrush Stretch="None" AlignmentX="Left" AlignmentY="Center">
+                                                        <VisualBrush.Visual>
+                                                            <TextBlock Text="Search by name, phone, or code..." 
+                                                                       Foreground="{StaticResource Gray400Brush}" 
+                                                                       FontSize="14"
+                                                                       Margin="0,0,0,0"/>
+                                                        </VisualBrush.Visual>
+                                                    </VisualBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Filters -->
+                <ToggleButton Style="{StaticResource FilterChipStyle}" 
+                              Margin="12,0,0,0"
+                              IsChecked="{Binding ShowCreditOnly}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CreditCardOutline" Width="16" Height="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Credit Users" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </ToggleButton>
+                
+                <ToggleButton Style="{StaticResource FilterChipStyle}" 
+                              Margin="10,0,0,0"
+                              IsChecked="{Binding ShowStarredOnly}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="StarOutline" Width="16" Height="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Star Customers" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </ToggleButton>
             </StackPanel>
-        </Border>
 
-        <!-- Loading Spinner -->
-        <Border Grid.Row="2" 
-                Style="{StaticResource GlassCardStyle}"
+            <!-- Action Buttons -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Style="{StaticResource OutlineButtonStyle}"
+                        Content="New Work Order"
+                        Margin="0,0,10,0"
+                        Command="{Binding CreateWorkOrderCommand}"/>
+                <Button Style="{StaticResource PrimaryButtonStyle}"
+                        Content="+ Add Customer"
+                        Command="{Binding AddCustomerCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Stats Cards -->
+        <Grid Grid.Row="3" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Total Customers Card -->
+            <Border Grid.Column="0" Style="{StaticResource StatCardStyle}" Margin="0,0,12,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" 
+                            Width="56" 
+                            Height="56" 
+                            CornerRadius="16" 
+                            Margin="0,0,16,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#EEF2FF" Offset="0"/>
+                                <GradientStop Color="#DDD6FE" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <materialDesign:PackIcon Kind="AccountMultiple" 
+                                                 Width="28" 
+                                                 Height="28"
+                                                 Foreground="{StaticResource PrimaryBrush}"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TotalCustomers}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="{StaticResource Gray900Brush}"/>
+                        <TextBlock Text="Total Customers" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource Gray500Brush}"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- With Credit Card -->
+            <Border Grid.Column="1" Style="{StaticResource StatCardStyle}" Margin="0,0,12,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" 
+                            Width="56" 
+                            Height="56" 
+                            CornerRadius="16" 
+                            Margin="0,0,16,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FEF3C7" Offset="0"/>
+                                <GradientStop Color="#FDE68A" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <materialDesign:PackIcon Kind="CreditCard" 
+                                                 Width="28" 
+                                                 Height="28"
+                                                 Foreground="{StaticResource WarningBrush}"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CustomersWithCredit}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="{StaticResource Gray900Brush}"/>
+                        <TextBlock Text="With Credit" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource Gray500Brush}"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Total Balance Card -->
+            <Border Grid.Column="2" Style="{StaticResource StatCardStyle}" Margin="0,0,12,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" 
+                            Width="56" 
+                            Height="56" 
+                            CornerRadius="16" 
+                            Margin="0,0,16,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#DCFCE7" Offset="0"/>
+                                <GradientStop Color="#BBF7D0" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <materialDesign:PackIcon Kind="CurrencyPkr" 
+                                                 Width="28" 
+                                                 Height="28"
+                                                 Foreground="{StaticResource SuccessBrush}"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TotalBalanceFormatted}" 
+                                   FontSize="24" 
+                                   FontWeight="Bold" 
+                                   Foreground="{StaticResource Gray900Brush}"/>
+                        <TextBlock Text="Total Balance" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource Gray500Brush}"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Star Customers Card -->
+            <Border Grid.Column="3" Style="{StaticResource StatCardStyle}" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" 
+                            Width="56" 
+                            Height="56" 
+                            CornerRadius="16" 
+                            Margin="0,0,16,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FCE7F3" Offset="0"/>
+                                <GradientStop Color="#FBCFE8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <materialDesign:PackIcon Kind="Star" 
+                                                 Width="28" 
+                                                 Height="28"
+                                                 Foreground="#EC4899"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding StarredCustomers}" 
+                                   FontSize="28" 
+                                   FontWeight="Bold" 
+                                   Foreground="{StaticResource Gray900Brush}"/>
+                        <TextBlock Text="Star Customers" 
+                                   FontSize="13" 
+                                   Foreground="{StaticResource Gray500Brush}"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Loading State with Skeleton -->
+        <Border Grid.Row="4" 
+                Background="White"
+                BorderBrush="{StaticResource Gray200Brush}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="32"
                 Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.06" Color="Black"/>
+            </Border.Effect>
             <Grid>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ProgressBar IsIndeterminate="True" Width="180" Height="6"/>
-                    <TextBlock Text="Loading customers..." Margin="0,16,0,0" Foreground="{StaticResource Gray500Brush}" HorizontalAlignment="Center"/>
+                    <ProgressBar IsIndeterminate="True" Width="200" Height="4" Background="{StaticResource Gray200Brush}" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="Loading customers..." Margin="0,20,0,0" Foreground="{StaticResource Gray500Brush}" HorizontalAlignment="Center" FontSize="15"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Empty State -->
-        <Border Grid.Row="2" 
-                Style="{StaticResource GlassCardStyle}"
+        <Border Grid.Row="4" 
+                Background="White"
+                BorderBrush="{StaticResource Gray200Brush}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="56"
                 Visibility="{Binding HasNoCustomers, Converter={StaticResource BoolToVisibilityConverter}}">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="48">
-                <materialDesign:PackIcon Kind="AccountOff" Width="64" Height="64" Foreground="{StaticResource Gray300Brush}" HorizontalAlignment="Center"/>
-                <TextBlock Text="No customers found" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Gray600Brush}" HorizontalAlignment="Center" Margin="0,16,0,8"/>
-                <TextBlock Text="Add your first customer to get started" FontSize="14" Foreground="{StaticResource Gray400Brush}" HorizontalAlignment="Center"/>
-                <Button Content="Add Customer" Style="{StaticResource PrimaryButtonStyle}" Margin="0,24,0,0" HorizontalAlignment="Center" Command="{Binding AddCustomerCommand}"/>
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.06" Color="Black"/>
+            </Border.Effect>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border Width="88" Height="88" CornerRadius="44" Background="#F3F4F6" Margin="0,0,0,24">
+                    <materialDesign:PackIcon Kind="AccountSearchOutline" Width="44" Height="44" Foreground="{StaticResource Gray400Brush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="No customers found" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource Gray800Brush}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                <TextBlock Text="Try adjusting your search or add a new customer" FontSize="15" Foreground="{StaticResource Gray500Brush}" HorizontalAlignment="Center" Margin="0,0,0,28"/>
+                <Button Content="+ Add Customer" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Center" Command="{Binding AddCustomerCommand}"/>
             </StackPanel>
         </Border>
 
         <!-- Customers Data Grid -->
-        <Border Grid.Row="2" 
-                Style="{StaticResource GlassCardStyle}"
+        <Border Grid.Row="4" 
+                Background="White"
+                BorderBrush="{StaticResource Gray200Brush}"
+                BorderThickness="1"
+                CornerRadius="16"
                 Visibility="{Binding HasCustomers, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="16" Opacity="0.08" Color="Black"/>
+            </Border.Effect>
             <DataGrid AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      CanUserSortColumns="True"
-                      GridLinesVisibility="None"
-                      BorderThickness="0"
-                      HeadersVisibility="Column"
-                      Background="Transparent"
-                      RowBackground="Transparent"
-                      AlternatingRowBackground="{StaticResource Gray50Brush}"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      RowStyle="{StaticResource ModernDataGridRowStyle}"
+                      ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}"
                       ItemsSource="{Binding CustomersView}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="CODE" Binding="{Binding CustomerCode}" Width="80">
+                    <!-- Code Column -->
+                    <DataGridTextColumn Header="CODE" 
+                                        Binding="{Binding CustomerCode}" 
+                                        Width="90"
+                                        SortMemberPath="CustomerCode">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="200"/>
-                    <DataGridTextColumn Header="PHONE" Binding="{Binding Phone}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
-                                <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="CREDIT LIMIT" Binding="{Binding CreditLimit, StringFormat='PKR {0:N0}'}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="BALANCE" Binding="{Binding TotalCredit, StringFormat='PKR {0:N0}'}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="FontSize" Value="13"/>
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                 <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="4,0"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="RISK" Width="100"
-                                            SortMemberPath="CreditRisk"
+                    
+                    <!-- Name Column -->
+                    <DataGridTextColumn Header="NAME" 
+                                        Binding="{Binding Name}" 
+                                        Width="*"
+                                        MinWidth="180"
+                                        SortMemberPath="Name">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="Foreground" Value="{StaticResource Gray800Brush}"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="4,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    
+                    <!-- Phone Column -->
+                    <DataGridTextColumn Header="PHONE" 
+                                        Binding="{Binding Phone, Converter={StaticResource PhoneNumberConverter}}" 
+                                        Width="130"
+                                        SortMemberPath="Phone">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource JetBrainsMonoFontFamily}"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Foreground" Value="{StaticResource Gray600Brush}"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="4,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    
+                    <!-- Credit Limit Column with Inline Edit -->
+                    <DataGridTemplateColumn Header="CREDIT LIMIT" 
+                                            Width="140"
+                                            SortMemberPath="CreditLimit"
                                             CanUserSort="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Background="{Binding CreditRisk, Converter={StaticResource RiskToBrushConverter}}"
-                                        CornerRadius="12"
-                                        Padding="8,4"
-                                        HorizontalAlignment="Left">
-                                    <TextBlock Text="{Binding CreditRisk, Converter={StaticResource RiskToDisplayConverter}}"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{Binding CreditRisk, Converter={StaticResource RiskToForegroundConverter}}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Display Mode -->
+                                    <StackPanel x:Name="DisplayPanel" 
+                                                Grid.Column="0"
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding CreditLimit, StringFormat='{}{0:N0}'}"
+                                                   FontFamily="{StaticResource JetBrainsMonoFontFamily}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource Gray600Brush}"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <!-- Edit Button -->
+                                    <Button x:Name="EditButton"
+                                            Grid.Column="1"
+                                            Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="Edit Credit Limit"
+                                            Margin="6,0,0,0"
+                                            Width="28"
+                                            Height="28"
+                                            Command="{Binding DataContext.EditCreditLimitCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16" Foreground="{StaticResource Gray400Brush}"/>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding CreditLimit, UpdateSourceTrigger=PropertyChanged}"
+                                         FontFamily="{StaticResource JetBrainsMonoFontFamily}"
+                                         FontSize="13"
+                                         HorizontalAlignment="Right"
+                                         VerticalAlignment="Center"
+                                         BorderThickness="0"
+                                         Background="Transparent"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <!-- Balance Column with Usage Display and Progress Bar -->
+                    <DataGridTemplateColumn Header="BALANCE / LIMIT" 
+                                            Width="160"
+                                            SortMemberPath="TotalCredit"
+                                            CanUserSort="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center" Margin="4,0">
+                                    <!-- Balance / Credit Limit Text -->
+                                    <TextBlock HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0:N0} / {1:N0}">
+                                                <Binding Path="TotalCredit"/>
+                                                <Binding Path="CreditLimit"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                        <TextBlock.FontFamily>
+                                            <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
+                                        </TextBlock.FontFamily>
+                                        <TextBlock.FontSize>12</TextBlock.FontSize>
+                                        <TextBlock.FontWeight>SemiBold</TextBlock.FontWeight>
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{StaticResource CreditUsageToColorConverter}">
+                                                <Binding Path="TotalCredit"/>
+                                                <Binding Path="CreditLimit"/>
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                    <!-- Credit Usage Progress Bar -->
+                                    <Border Height="4" 
+                                            Margin="0,6,0,0"
+                                            Background="{StaticResource Gray200Brush}"
+                                            CornerRadius="2">
+                                        <ProgressBar Height="4" 
+                                                     Background="Transparent"
+                                                     BorderThickness="0">
+                                            <ProgressBar.Foreground>
+                                                <MultiBinding Converter="{StaticResource CreditUsageToColorConverter}">
+                                                    <Binding Path="TotalCredit"/>
+                                                    <Binding Path="CreditLimit"/>
+                                                </MultiBinding>
+                                            </ProgressBar.Foreground>
+                                            <ProgressBar.Value>
+                                                <MultiBinding Converter="{StaticResource CreditUsageToProgressConverter}">
+                                                    <Binding Path="TotalCredit"/>
+                                                    <Binding Path="CreditLimit"/>
+                                                </MultiBinding>
+                                            </ProgressBar.Value>
+                                        </ProgressBar>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <!-- Risk Column with Dynamic Calculation -->
+                    <DataGridTemplateColumn Header="RISK" 
+                                            Width="110"
+                                            SortMemberPath="TotalCredit"
+                                            CanUserSort="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding CalculatedRisk, Converter={StaticResource RiskToBrushConverter}}"
+                                        CornerRadius="24"
+                                        Padding="12,6"
+                                        HorizontalAlignment="Left"
+                                        MinWidth="80">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="0" BlurRadius="4" Opacity="0.1" Color="Black"/>
+                                    </Border.Effect>
+                                    <TextBlock Text="{Binding CalculatedRisk, Converter={StaticResource RiskToShortDisplayConverter}}"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Foreground="{Binding CalculatedRisk, Converter={StaticResource RiskToForegroundConverter}}"
+                                               HorizontalAlignment="Center"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="ACTIONS" Width="120"
+                    
+                    <!-- Actions Column with Better Icons and Tooltips -->
+                    <DataGridTemplateColumn Header="ACTIONS" 
+                                            Width="180"
                                             CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                            Padding="8"
-                                            Command="{Binding DataContext.EditCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                <StackPanel Orientation="Horizontal" Margin="4,0">
+                                    <!-- Star Button -->
+                                    <Button Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="Toggle Star"
+                                            Margin="0,0,6,0"
+                                            Command="{Binding DataContext.ToggleStarCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
+                                        <materialDesign:PackIcon Kind="{Binding IsStarred, Converter={StaticResource BoolToStarIconConverter}}" 
+                                                                 Width="20" Height="20"
+                                                                 Foreground="{Binding IsStarred, Converter={StaticResource BoolToStarColorConverter}}"/>
                                     </Button>
-                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                            Padding="8"
-                                            Margin="4,0,0,0"
+                                    
+                                    <!-- View Button -->
+                                    <Button Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="View Details"
+                                            Margin="0,0,6,0"
                                             Command="{Binding DataContext.ViewCustomerDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
+                                        <materialDesign:PackIcon Kind="EyeOutline" Width="20" Height="20" Foreground="{StaticResource Gray500Brush}"/>
                                     </Button>
-                                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                            Padding="8"
-                                            Margin="4,0,0,0"
-                                            Foreground="{StaticResource DangerBrush}"
-                                            Command="{Binding DataContext.DeleteCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    
+                                    <!-- Edit Button -->
+                                    <Button Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="Edit Customer"
+                                            Margin="0,0,6,0"
+                                            Command="{Binding DataContext.EditCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
+                                        <materialDesign:PackIcon Kind="PencilOutline" Width="20" Height="20" Foreground="{StaticResource PrimaryBrush}"/>
+                                    </Button>
+                                    
+                                    <!-- Create Work Order Button -->
+                                    <Button Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="Create Work Order"
+                                            Margin="0,0,6,0"
+                                            Command="{Binding DataContext.CreateWorkOrderForCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="FileDocumentPlusOutline" Width="20" Height="20" Foreground="{StaticResource SuccessBrush}"/>
+                                    </Button>
+                                    
+                                    <!-- Delete Button -->
+                                    <Button Style="{StaticResource ActionButtonStyle}"
+                                            ToolTip="Delete Customer"
+                                            Command="{Binding DataContext.ConfirmDeleteCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="{StaticResource DangerBrush}"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -194,6 +745,49 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+        </Border>
+        
+        <!-- Delete Confirmation Dialog -->
+        <Border Grid.RowSpan="4"
+                Background="#80000000"
+                Visibility="{Binding ShowDeleteConfirmation, Converter={StaticResource BoolToVisibilityConverter}}"
+                Panel.ZIndex="1000">
+            <Grid>
+                <Border Style="{StaticResource GlassElevatedStyle}" 
+                        MaxWidth="400"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <StackPanel Margin="8">
+                        <materialDesign:PackIcon Kind="AlertCircleOutline" 
+                                                 Width="48" 
+                                                 Height="48"
+                                                 Foreground="{StaticResource DangerBrush}"
+                                                 HorizontalAlignment="Center"/>
+                        <TextBlock Text="Delete Customer?" 
+                                   FontSize="20" 
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,16,0,8"
+                                   Foreground="{StaticResource Gray900Brush}"/>
+                        <TextBlock Text="{Binding CustomerToDelete.Name, StringFormat='Are you sure you want to delete {0}? This action cannot be undone.'}" 
+                                   FontSize="14"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Foreground="{StaticResource Gray600Brush}"
+                                   Margin="0,0,0,24"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Style="{StaticResource OutlineButtonStyle}"
+                                    Content="Cancel"
+                                    Margin="0,0,12,0"
+                                    Command="{Binding CancelDeleteCommand}"/>
+                            <Button Style="{StaticResource PrimaryButtonStyle}"
+                                    Content="Delete"
+                                    Background="{StaticResource DangerBrush}"
+                                    Command="{Binding ConfirmDeleteCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

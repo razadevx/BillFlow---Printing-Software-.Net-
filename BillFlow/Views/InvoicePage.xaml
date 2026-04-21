@@ -10,6 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -17,8 +18,14 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Header Section -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,24">
+            <TextBlock Text="Invoice Generator" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Gray900Brush}" FontFamily="{StaticResource InterFontFamily}"/>
+            <TextBlock Text="Create and print invoices for your customers." FontSize="14" Foreground="{StaticResource Gray500Brush}" Margin="0,8,0,0" FontFamily="{StaticResource InterFontFamily}"/>
+        </StackPanel>
+
         <!-- Notifications -->
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,16">
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,16">
             <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
@@ -36,7 +43,7 @@
         </StackPanel>
 
         <!-- Left Panel - Customer & Work Order Selection -->
-        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassCardStyle}" Margin="0,0,16,0">
+        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource GlassCardStyle}" Margin="0,0,16,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -64,11 +71,14 @@
                         </StackPanel>
                     </Border>
                     
-                    <Button Style="{StaticResource OutlineButtonStyle}" 
-                            Content="Print Account Statement" 
-                            Command="{Binding GenerateCustomerStatementCommand}"
+                    <Button Content="Print Account Statement"
+                            Command="{Binding GenerateStatementCommand}"
                             Margin="0,8,0,0"
-                            HorizontalAlignment="Stretch">
+                            HorizontalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource Gray400Brush}"
+                            BorderThickness="1.5"
+                            Padding="12,8">
                         <Button.ContentTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -104,19 +114,25 @@
 
                 <!-- Generate Button -->
                 <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,16,0,0">
-                    <Button Style="{StaticResource PrimaryButtonStyle}"
-                            Content="Generate Invoice"
+                    <Button Content="Generate Invoice"
                             Command="{Binding GenerateInvoiceCommand}"
-                            Margin="0,0,0,8"/>
-                    <Button Style="{StaticResource SecondaryButtonStyle}"
-                            Content="Generate Customer Statement"
-                            Command="{Binding GenerateStatementCommand}"/>
+                            Margin="0,0,0,8"
+                            Background="{StaticResource PrimaryBrush}"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="24,10"/>
+                    <Button Content="Generate Customer Statement"
+                            Command="{Binding GenerateStatementCommand}"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource PrimaryBrush}"
+                            BorderThickness="1.5"
+                            Padding="24,10"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Right Panel - Invoice Preview -->
-        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassCardStyle}">
+        <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource GlassCardStyle}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -176,11 +192,14 @@
 
                 <!-- Action Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-                    <Button Style="{StaticResource SecondaryButtonStyle}" 
-                            Command="{Binding GenerateInvoiceCommand}"
-                            Margin="0,0,8,0">
+                    <Button Command="{Binding GenerateInvoiceCommand}"
+                            Margin="0,0,8,0"
+                            Background="White"
+                            BorderBrush="{StaticResource PrimaryBrush}"
+                            BorderThickness="1.5"
+                            Padding="16,8">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="FilePdf" Width="18" Height="18" Margin="0,0,8,0"/>
+                            <materialDesign:PackIcon Kind="FilePdfBox" Width="18" Height="18" Margin="0,0,8,0"/>
                             <TextBlock Text="Export PDF"/>
                         </StackPanel>
                     </Button>

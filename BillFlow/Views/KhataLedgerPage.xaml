@@ -11,11 +11,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Header Section -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Khata Ledger" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Gray900Brush}" FontFamily="{StaticResource InterFontFamily}"/>
+            <TextBlock Text="Track customer credit, payments, and outstanding balances." FontSize="14" Foreground="{StaticResource Gray500Brush}" Margin="0,8,0,0" FontFamily="{StaticResource InterFontFamily}"/>
+        </StackPanel>
+
         <!-- Notifications and Banner -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
             <!-- Notifications -->
             <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
@@ -51,13 +58,15 @@
                                Foreground="White"
                                Margin="0,8,0,0"/>
                 </StackPanel>
-                <Button Grid.Column="1" 
-                        Style="{StaticResource SecondaryButtonStyle}"
+                <Button Grid.Column="1"
                         Background="White"
                         BorderBrush="White"
-                        Foreground="{StaticResource PrimaryBrush}"
+                        Foreground="#4F46E5"
                         Content="Record Payment"
                         VerticalAlignment="Center"
+                        Padding="24,10"
+                        FontWeight="SemiBold"
+                        BorderThickness="1.5"
                         Command="{Binding RecordPaymentCommand}"
                         CommandParameter="{Binding SelectedSummary}"/>
             </Grid>
@@ -65,7 +74,7 @@
         </StackPanel>
 
         <!-- Customer Selector and Stats -->
-        <Grid Grid.Row="1" Margin="0,0,0,16">
+        <Grid Grid.Row="2" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -105,7 +114,7 @@
         </Grid>
 
         <!-- Credit Summary Table -->
-        <Border Grid.Row="2" Style="{StaticResource GlassCardStyle}">
+        <Border Grid.Row="3" Style="{StaticResource GlassCardStyle}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -169,15 +178,18 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Style="{StaticResource PrimaryButtonStyle}" 
-                                                Content="Pay" 
+                                        <Button Content="Pay"
                                                 Padding="16,6"
                                                 FontSize="12"
+                                                Background="{StaticResource PrimaryBrush}"
+                                                Foreground="White"
+                                                BorderThickness="0"
                                                 Command="{Binding DataContext.RecordPaymentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}"/>
-                                        <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                                                Padding="8"
+                                        <Button Padding="8"
                                                 Margin="4,0,0,0"
+                                                Background="Transparent"
+                                                BorderThickness="0"
                                                 Command="{Binding DataContext.ViewCustomerKhataCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}">
                                             <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
