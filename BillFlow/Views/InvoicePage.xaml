@@ -93,7 +93,7 @@
                 <!-- Work Orders List -->
                 <StackPanel Grid.Row="2">
                     <TextBlock Text="PENDING WORK ORDERS" Style="{StaticResource LabelStyle}" Margin="0,0,0,8"/>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
+                    <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" Height="200">
                         <ListBox ItemsSource="{Binding PendingWorkOrders}"
                                  SelectedItem="{Binding SelectedWorkOrder, UpdateSourceTrigger=PropertyChanged}"
                                  Background="Transparent"

@@ -17,12 +17,103 @@
             <converters:ActiveNavForegroundConverter x:Key="ActiveNavForegroundConverter"/>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
             <converters:RouteMatchConverter x:Key="RouteMatchConverter"/>
+            <converters:RouteMatchToBrushConverter x:Key="RouteMatchToBrushConverter"/>
+            <converters:RouteMatchToForegroundConverter x:Key="RouteMatchToForegroundConverter"/>
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
             <converters:RiskToBrushConverter x:Key="RiskToBrushConverter"/>
             <converters:RiskToForegroundConverter x:Key="RiskToForegroundConverter"/>
             <converters:RiskToDisplayConverter x:Key="RiskToDisplayConverter"/>
+            <converters:RiskToShortDisplayConverter x:Key="RiskToShortDisplayConverter"/>
+            <converters:BoolToStarIconConverter x:Key="BoolToStarIconConverter"/>
+            <converters:BoolToStarColorConverter x:Key="BoolToStarColorConverter"/>
+            <converters:BalanceToColorConverter x:Key="BalanceToColorConverter"/>
+            <converters:PhoneNumberConverter x:Key="PhoneNumberConverter"/>
+            <converters:CreditUsageToProgressConverter x:Key="CreditUsageToProgressConverter"/>
+            <converters:CreditUsageToRiskConverter x:Key="CreditUsageToRiskConverter"/>
+            <converters:CreditUsageToColorConverter x:Key="CreditUsageToColorConverter"/>
+            <converters:CurrencyFormatConverter x:Key="CurrencyFormatConverter"/>
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+            <!-- Modern Slim ScrollBar Style -->
+            <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Width" Value="6"/>
+                <Setter Property="MinWidth" Value="6"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                                <Border Background="Transparent" CornerRadius="3" Width="6"/>
+                                <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageUpCommand"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Background="{StaticResource Gray400Brush}" Opacity="0.6" Width="6" Height="Auto">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3"/>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageDownCommand"/>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PART_Track" Property="IsEnabled" Value="True"/>
+                                    <Setter TargetName="Bg" Property="Background" Value="Transparent"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="Orientation" Value="Horizontal">
+                        <Setter Property="Width" Value="Auto"/>
+                        <Setter Property="Height" Value="6"/>
+                        <Setter Property="MinHeight" Value="6"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Modern ScrollViewer Style -->
+            <Style x:Key="ModernScrollViewerStyle" TargetType="ScrollViewer">
+                <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollViewer">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}" Margin="{TemplateBinding Padding}"/>
+                                    <ScrollBar x:Name="PART_VerticalScrollBar" 
+                                               Style="{StaticResource ModernScrollBarStyle}"
+                                               Orientation="Vertical" 
+                                               HorizontalAlignment="Right"
+                                               Value="{TemplateBinding VerticalOffset}" 
+                                               Maximum="{TemplateBinding ScrollableHeight}" 
+                                               ViewportSize="{TemplateBinding ViewportHeight}" 
+                                               Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                    <ScrollBar x:Name="PART_HorizontalScrollBar" 
+                                               Style="{StaticResource ModernScrollBarStyle}"
+                                               Orientation="Horizontal" 
+                                               VerticalAlignment="Bottom"
+                                               Value="{TemplateBinding HorizontalOffset}" 
+                                               Maximum="{TemplateBinding ScrollableWidth}" 
+                                               ViewportSize="{TemplateBinding ViewportWidth}" 
+                                               Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

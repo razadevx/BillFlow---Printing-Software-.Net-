@@ -1,0 +1,153 @@
+<Window x:Class="BillFlow.Views.Dialogs.AddInventoryItemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Height="520" Width="480"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="White">
+
+    <Border Padding="24">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0" 
+                       Text="{Binding WindowTitle}"
+                       Style="{StaticResource H2Style}"
+                       Margin="0,0,0,20"/>
+
+            <!-- Error Message -->
+            <Border Grid.Row="1"
+                    Background="#FEF2F2" 
+                    BorderBrush="{StaticResource DangerBrush}" 
+                    BorderThickness="1" 
+                    CornerRadius="8" 
+                    Padding="12" 
+                    Margin="0,0,0,16"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Form -->
+            <ScrollViewer Grid.Row="2" Style="{StaticResource ModernScrollViewerStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Name -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                        <TextBlock Text="Item Name *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.Name, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+
+                    <!-- Description -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                        <TextBlock Text="Description" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.Description, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"
+                                 Height="60"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"/>
+                    </StackPanel>
+
+                    <!-- Category -->
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,8,12">
+                        <TextBlock Text="Category *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding Categories}"
+                                  SelectedItem="{Binding Item.Category}"
+                                  Padding="12,8"/>
+                    </StackPanel>
+
+                    <!-- Unit -->
+                    <StackPanel Grid.Row="2" Grid.Column="1" Margin="8,0,0,12">
+                        <TextBlock Text="Unit *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding Units}"
+                                  SelectedItem="{Binding Item.Unit}"
+                                  Padding="12,8"/>
+                    </StackPanel>
+
+                    <!-- Quantity -->
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,8,12">
+                        <TextBlock Text="Quantity *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.Quantity, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+
+                    <!-- Min Stock Level -->
+                    <StackPanel Grid.Row="3" Grid.Column="1" Margin="8,0,0,12">
+                        <TextBlock Text="Min Stock Level *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.MinimumStockLevel, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+
+                    <!-- Cost Per Unit -->
+                    <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,8,12">
+                        <TextBlock Text="Cost Per Unit (PKR) *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.CostPerUnit, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+
+                    <!-- Selling Price -->
+                    <StackPanel Grid.Row="4" Grid.Column="1" Margin="8,0,0,12">
+                        <TextBlock Text="Selling Price (PKR) *" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.SellingPrice, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+
+                    <!-- Supplier -->
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                        <TextBlock Text="Supplier" Style="{StaticResource LabelStyle}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Item.Supplier, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource GlassInputStyle}"/>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="3" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Margin="0,20,0,0">
+                <Button Content="Cancel"
+                        Click="CancelButton_Click"
+                        Background="Transparent"
+                        Foreground="{StaticResource Gray600Brush}"
+                        BorderThickness="0"
+                        Padding="16,10"
+                        Margin="0,0,8,0"/>
+                <Button Content="Save"
+                        Click="SaveButton_Click"
+                        Background="{StaticResource PrimaryBrush}"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Padding="24,10"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

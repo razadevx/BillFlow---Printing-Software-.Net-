@@ -7,17 +7,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel MaxWidth="600" HorizontalAlignment="Left">
+    <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" Padding="24">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
             <!-- Notifications -->
-            <Border Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+            <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0"
+                    Background="#FEF2F2" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource DangerBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
-            <Border Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
+            <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0"
+                    Background="#F0FDF4" BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16"
                     Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{StaticResource SuccessBrush}" Width="20" Height="20" VerticalAlignment="Center"/>
@@ -26,53 +39,10 @@
             </Border>
 
             <!-- Business Information Section -->
-            <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16">
+            <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
+                    Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16">
                 <StackPanel>
                     <TextBlock Text="Business Information" Style="{StaticResource H3Style}" Margin="0,0,0,24"/>
-                    
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-                            <TextBlock Text="Business Name" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding BusinessName, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1" Margin="0,0,0,16">
-                            <TextBlock Text="Owner Name" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="2" Margin="0,0,0,16">
-                            <TextBlock Text="Phone Number" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="3">
-                            <TextBlock Text="Business Address" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" 
-                                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" 
-                                     Height="80"
-                                     TextWrapping="Wrap"
-                                     AcceptsReturn="True"
-                                     VerticalContentAlignment="Top"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
-            <!-- Pricing Settings -->
-            <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16">
-                <StackPanel>
-                    <TextBlock Text="Pricing &amp; Defaults" Style="{StaticResource H3Style}" Margin="0,0,0,24"/>
                     
                     <Grid>
                         <Grid.RowDefinitions>
@@ -86,67 +56,101 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,16">
-                            <TextBlock Text="Default Rate per SqFt (PKR)" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding RatePerSqFt, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.FontFamily>
-                                    <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
-                                </TextBox.FontFamily>
-                            </TextBox>
+                            <TextBlock Text="Business Name" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding BusinessName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="8,0,0,16">
-                            <TextBlock Text="Default Credit Limit (PKR)" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding DefaultCreditLimit, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.FontFamily>
-                                    <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
-                                </TextBox.FontFamily>
-                            </TextBox>
+                            <TextBlock Text="Owner Name" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                            <TextBlock Text="Invoice Prefix" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding InvoicePrefix, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,8,16">
+                            <TextBlock Text="Phone Number" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
 
-            <!-- Invoice Settings -->
-            <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,16">
-                <StackPanel>
-                    <TextBlock Text="Invoice Settings" Style="{StaticResource H3Style}" Margin="0,0,0,24"/>
-                    
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="8,0,0,16">
+                            <TextBlock Text="Currency" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                            <ComboBox SelectedValue="{Binding CurrencySymbol}"
+                                      SelectedValuePath="Content"
+                                      materialDesign:HintAssist.Hint="Select Currency">
+                                <ComboBoxItem>PKR</ComboBoxItem>
+                                <ComboBoxItem>USD</ComboBoxItem>
+                                <ComboBoxItem>AED</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
 
-                        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-                            <TextBlock Text="Invoice Terms / Footer Message" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                            <TextBlock Text="Business Address" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
                             <TextBox Style="{StaticResource GlassInputStyle}" 
-                                     Text="{Binding InvoiceTerms, UpdateSourceTrigger=PropertyChanged}" 
-                                     Height="60"
+                                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" 
+                                     Height="80"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"
                                      VerticalContentAlignment="Top"/>
                         </StackPanel>
-
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="Currency Symbol" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
-                            <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding CurrencySymbol, UpdateSourceTrigger=PropertyChanged}" MaxLength="3"/>
-                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>
 
+            <!-- Pricing Settings -->
+            <Border Grid.Column="0" Grid.Row="2"
+                    Style="{StaticResource GlassCardStyle}" Margin="0,0,8,16">
+                <StackPanel>
+                    <TextBlock Text="Pricing &amp; Defaults" Style="{StaticResource H3Style}" Margin="0,0,0,24"/>
+                    
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Default Rate per SqFt (PKR)" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                        <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding RatePerSqFt, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.FontFamily>
+                                <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
+                            </TextBox.FontFamily>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Default Credit Limit (PKR)" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                        <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding DefaultCreditLimit, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.FontFamily>
+                                <StaticResource ResourceKey="JetBrainsMonoFontFamily"/>
+                            </TextBox.FontFamily>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Invoice Prefix" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                        <TextBox Style="{StaticResource GlassInputStyle}" Text="{Binding InvoicePrefix, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Invoice Settings -->
+            <Border Grid.Column="1" Grid.Row="2"
+                    Style="{StaticResource GlassCardStyle}" Margin="8,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Invoice Settings" Style="{StaticResource H3Style}" Margin="0,0,0,24"/>
+                    
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Invoice Terms / Footer Message" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,8"/>
+                        <TextBox Style="{StaticResource GlassInputStyle}" 
+                                 Text="{Binding InvoiceTerms, UpdateSourceTrigger=PropertyChanged}" 
+                                 Height="120"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalContentAlignment="Top"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- Save Button -->
-            <Button Style="{StaticResource PrimaryButtonStyle}" 
+            <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3"
+                    Style="{StaticResource PrimaryButtonStyle}" 
                     Content="Save Settings" 
                     Command="{Binding SaveSettingsCommand}"
                     HorizontalAlignment="Left"
-                    Padding="24,12"/>
-        </StackPanel>
+                    Padding="32,14"
+                    FontSize="14"/>
+        </Grid>
     </ScrollViewer>
 </UserControl>

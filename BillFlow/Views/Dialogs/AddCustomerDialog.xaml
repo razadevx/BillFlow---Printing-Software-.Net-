@@ -23,7 +23,7 @@
             <TextBlock Grid.Row="0" Text="{Binding DialogTitle}" Style="{StaticResource H2Style}" Margin="0,0,0,24"/>
 
             <!-- Form Fields -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="1" Style="{StaticResource ModernScrollViewerStyle}">
                 <StackPanel>
                     <!-- Name -->
                     <StackPanel Margin="0,0,0,16">

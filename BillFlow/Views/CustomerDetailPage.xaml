@@ -50,7 +50,7 @@
 
         <TabControl Grid.Row="1" BorderThickness="0" Background="Transparent">
             <TabItem Header="Profile">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,8,0,0">
+                <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" Padding="0,8,0,0">
                     <StackPanel>
                         <Border Style="{StaticResource GlassCardStyle}" Margin="0,0,0,12">
                             <Grid>

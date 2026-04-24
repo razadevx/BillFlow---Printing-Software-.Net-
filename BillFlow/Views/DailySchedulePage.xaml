@@ -102,7 +102,7 @@
 
                     <TextBlock Grid.Row="0" Text="✅ Done" Style="{StaticResource H3Style}" Margin="0,0,0,16" Foreground="{StaticResource SuccessBrush}"/>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" Style="{StaticResource ModernScrollViewerStyle}">
                         <ItemsControl ItemsSource="{Binding CompletedWork}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -141,7 +141,7 @@
 
                     <TextBlock Grid.Row="0" Text="⏳ To-Do" Style="{StaticResource H3Style}" Margin="0,0,0,16" Foreground="{StaticResource WarningBrush}"/>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" Style="{StaticResource ModernScrollViewerStyle}">
                         <ItemsControl ItemsSource="{Binding PendingWork}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
