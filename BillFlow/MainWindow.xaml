@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BillFlow.ViewModels"
+        xmlns:converters="clr-namespace:BillFlow.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="BillFlow — Printing Business Management"
@@ -21,7 +22,9 @@
 
         <!-- Sidebar -->
         <Border Grid.Column="0"
-                Style="{StaticResource GlassSidebarStyle}">
+                Background="White"
+                BorderBrush="{StaticResource Gray200Brush}"
+                BorderThickness="0,0,1,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -57,8 +60,8 @@
                 <!-- Navigation -->
                 <ScrollViewer Grid.Row="2"
                               VerticalScrollBarVisibility="Auto"
-                              Padding="12,0,12,20">
-                    <ItemsControl ItemsSource="{Binding NavigationItems}">
+                              Padding="12,0,0,20">
+                    <ItemsControl ItemsSource="{Binding NavigationItems}" Margin="0,0,12,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:NavItem}">
                                 <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -70,14 +73,72 @@
                                             <Binding Path="Name"/>
                                         </MultiBinding>
                                     </Button.Tag>
+                                    <Button.Margin>0,0,0,6</Button.Margin>
                                     <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarNavButtonStyle}">
-                                            <Setter Property="Margin" Value="0,0,0,6"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsFooter}" Value="True">
-                                                    <Setter Property="Margin" Value="0,18,0,6"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
+                                        <Style TargetType="Button">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="{StaticResource Gray700Brush}"/>
+                                            <Setter Property="Padding" Value="4"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="MinHeight" Value="48"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Grid>
+                                                            <!-- Left border accent for active state -->
+                                                            <Border x:Name="LeftAccent" 
+                                                                    Background="{StaticResource PrimaryBrush}" 
+                                                                    Width="3" 
+                                                                    CornerRadius="0,2,2,0"
+                                                                    HorizontalAlignment="Left"
+                                                                    Visibility="Collapsed"/>
+                                                            <!-- Main background -->
+                                                            <Border x:Name="BgBorder" 
+                                                                    Background="{TemplateBinding Background}" 
+                                                                    CornerRadius="10"
+                                                                    Margin="4,2">
+                                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                                  Margin="12,10"
+                                                                                  HorizontalAlignment="Stretch"
+                                                                                  VerticalAlignment="Center"
+                                                                                  RecognizesAccessKey="True"/>
+                                                            </Border>
+                                                        </Grid>
+                                                        <ControlTemplate.Triggers>
+                                                            <!-- Active State (when Tag is True) -->
+                                                            <Trigger Property="Tag" Value="True">
+                                                                <Setter TargetName="LeftAccent" Property="Visibility" Value="Visible"/>
+                                                                <Setter TargetName="BgBorder" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                                                <Setter TargetName="ContentPresenter" Property="TextBlock.Foreground" Value="White"/>
+                                                                <Setter TargetName="BgBorder" Property="Effect">
+                                                                    <Setter.Value>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.25" Color="#4F46E5"/>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Trigger>
+                                                            <!-- Hover State -->
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="BgBorder" Property="Background" Value="#F3F4F6"/>
+                                                            </Trigger>
+                                                            <!-- Hover on Active State -->
+                                                            <MultiTrigger>
+                                                                <MultiTrigger.Conditions>
+                                                                    <Condition Property="Tag" Value="True"/>
+                                                                    <Condition Property="IsMouseOver" Value="True"/>
+                                                                </MultiTrigger.Conditions>
+                                                                <Setter TargetName="BgBorder" Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
+                                                            </MultiTrigger>
+                                                            <!-- Pressed State -->
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter TargetName="BgBorder" Property="Background" Value="#E5E7EB"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </Button.Style>
                                     <Grid>
@@ -86,15 +147,29 @@
                                                        FontSize="18"
                                                        Width="28"
                                                        VerticalAlignment="Center"
-                                                       TextAlignment="Center"
-                                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                       TextAlignment="Center">
+                                                <TextBlock.Foreground>
+                                                    <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=Button}">
+                                                        <Binding.Converter>
+                                                            <converters:ActiveNavForegroundConverter/>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
                                             <TextBlock Text="{Binding Title}"
                                                        FontFamily="{StaticResource InterFontFamily}"
                                                        FontSize="14"
                                                        FontWeight="SemiBold"
                                                        VerticalAlignment="Center"
-                                                       Margin="10,0,0,0"
-                                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                       Margin="10,0,0,0">
+                                                <TextBlock.Foreground>
+                                                    <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=Button}">
+                                                        <Binding.Converter>
+                                                            <converters:ActiveNavForegroundConverter/>
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
                                         </StackPanel>
                                     </Grid>
                                 </Button>
@@ -107,48 +182,7 @@
 
         <!-- Main -->
         <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <Border Grid.Row="0"
-                    Style="{StaticResource GlassHeaderStyle}"
-                    Padding="28,0,28,0"
-                    MinHeight="76">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel VerticalAlignment="Center" Margin="0,16,0,16">
-                        <TextBlock Text="{Binding PageHeader}"
-                                   Style="{StaticResource H2Style}"
-                                   FontSize="22"/>
-                        <TextBlock Text="Manage your printing business in one place"
-                                   Style="{StaticResource BodySmallStyle}"
-                                   Margin="0,4,0,0"
-                                   Opacity="0.7"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Center">
-                        <Button Style="{StaticResource SecondaryButtonStyle}"
-                                Content="New customer"
-                                Margin="0,0,10,0"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="Customers"/>
-                        <Button Style="{StaticResource PrimaryButtonStyle}"
-                                Content="New work order"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="WorkOrderCreate"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <Border Grid.Row="1"
+            <Border
                     Background="{StaticResource Gray50Brush}"
                     Padding="28,20,28,28">
                 <Frame x:Name="MainFrame"
